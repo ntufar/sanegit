@@ -2,6 +2,7 @@ import { access } from "node:fs/promises";
 import { execFile } from "node:child_process";
 import { resolve } from "node:path";
 import { promisify } from "node:util";
+import { formatCommandOutput } from "../core/output.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -92,15 +93,12 @@ export async function runWtfCommand(
 }
 
 export function formatWtfDiagnosis(diagnosis: WtfDiagnosis): string {
-  const lines = [
-    `Summary: ${diagnosis.summary}`,
-    `Risk: ${diagnosis.risk}`,
-    `Recommendation: ${diagnosis.recommendation}`,
-    "Detail:",
-    ...diagnosis.detail.map((line) => `- ${line}`),
-  ];
-
-  return lines.join("\n");
+  return formatCommandOutput({
+    summary: diagnosis.summary,
+    risk: diagnosis.risk,
+    recommendation: diagnosis.recommendation,
+    detail: diagnosis.detail,
+  });
 }
 
 async function collectDiagnosis(
