@@ -1,5 +1,8 @@
 # SaneGit
 
+[![npm version](https://img.shields.io/npm/v/sanegit.svg)](https://www.npmjs.com/package/sanegit)
+[![npm downloads](https://img.shields.io/npm/dm/sanegit.svg)](https://www.npmjs.com/package/sanegit)
+
 SaneGit is a CLI assistant that helps developers understand repository state, avoid risky pushes, and recover from git problems with plain-English guidance.
 
 📖 **[Full documentation](doc/guide.md)**
