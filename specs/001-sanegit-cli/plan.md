@@ -86,20 +86,31 @@ specs/001-sanegit-cli/
 src/
 ├── cli.ts
 ├── commands/
+│   ├── ai-configure.ts
 │   ├── status.ts
 │   ├── commit.ts
 │   ├── push.ts
 │   ├── check.ts
 │   ├── fix.ts
 │   ├── undo.ts
-│   └── explain.ts
+│   ├── explain.ts
+│   └── wtf.ts
 ├── core/
 │   ├── git.ts
+│   ├── config.ts
+│   ├── output.ts
 │   ├── predictor.ts
+│   ├── telemetry.ts
+│   ├── repositorySnapshot.ts
+│   ├── explainer.ts
+│   ├── commitPlanner.ts
+│   ├── pushSafety.ts
 │   ├── resolver.ts
+│   ├── undoPlanner.ts
 │   └── memory.ts
 └── ai/
-  └── prompts.ts
+│   ├── prompts.ts
+│   └── providers.ts
 
 .sanegit/
 ├── config.json
@@ -107,8 +118,29 @@ src/
 
 tests/
 ├── contract/
+│   ├── ai-configure.contract.test.ts
+│   ├── status.contract.test.ts
+│   ├── explain.contract.test.ts
+│   ├── commit.contract.test.ts
+│   ├── push.contract.test.ts
+│   ├── check.contract.test.ts
+│   ├── recovery.contract.test.ts
+│   └── wtf.contract.test.ts
 ├── integration/
-└── unit/
+│   ├── ai-configure.integration.test.ts
+│   ├── status.integration.test.ts
+│   ├── explain.integration.test.ts
+│   ├── commit.integration.test.ts
+│   ├── push.integration.test.ts
+│   ├── check.integration.test.ts
+│   ├── fix.integration.test.ts
+│   ├── undo.integration.test.ts
+│   ├── wtf.integration.test.ts
+│   └── performance.integration.test.ts
+├── unit/
+│   └── coreServices.test.ts
+└── helpers/
+    └── repoHarness.ts
 ```
 
 **Structure Decision**: Single-project CLI layout selected to match the PRD command-oriented
@@ -118,6 +150,4 @@ architecture and keep command, orchestration, and AI concerns isolated but close
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| None | N/A | N/A |
+No constitution violations required justification in this plan.

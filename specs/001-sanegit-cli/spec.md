@@ -62,16 +62,17 @@ As a developer, I can create smart commits and push with predictive checks and g
 
 ### User Story 3 - Recover from Problems Confidently (Priority: P3)
 
-As a developer, I can run fix, undo, and check commands to recover from common git failures with low risk and clear explanations.
+As a developer, I can run fix, undo, check, and wtf commands to recover from common git failures with low risk and clear explanations.
 
 **Why this priority**: Recovery workflows are less frequent but critical when needed; confidence here reduces panic-driven mistakes.
 
-**Independent Test**: Can be tested by introducing known failure states (conflicts, bad commit, accidental changes) and validating users can recover using the tool without manual git surgery.
+**Independent Test**: Can be tested by introducing known failure states (conflicts, bad commit, accidental changes, failed CI, detached HEAD, and branch drift) and validating users can recover using the tool without manual git surgery.
 
 **Acceptance Scenarios**:
 
 1. **Given** a merge conflict, **When** the user runs fix, **Then** the tool provides a safe resolution plan and applies approved steps.
 2. **Given** an undesired recent action, **When** the user runs undo, **Then** the tool presents available rollback options with consequences and performs the selected safe rollback.
+3. **Given** a repository with multiple concurrent problems, **When** the user runs wtf, **Then** the tool performs a combined diagnosis, identifies the most urgent faults, and offers a fix-oriented next step.
 
 ---
 
@@ -85,6 +86,7 @@ As a developer, I can run fix, undo, and check commands to recover from common g
 - Repository is not initialized or is in a detached HEAD state.
 - Working tree contains binary files or very large changes where automatic explanation quality may degrade.
 - Remote is unavailable or authentication fails during push.
+- GitHub CLI is unavailable or no recent CI runs exist when repository diagnostics query workflow status.
 - AI provider endpoint is unavailable, misconfigured, or returns authentication errors.
 - Conflicts cannot be auto-resolved with high confidence.
 - Undo request would remove unpushed commits or discard uncommitted work.
@@ -118,6 +120,9 @@ As a developer, I can run fix, undo, and check commands to recover from common g
 - **FR-018**: System MUST display an explicit risk warning when a non-HTTPS AI API URL is configured.
 - **FR-019**: System MUST continue command execution using non-AI fallback behavior when AI provider calls fail or timeout.
 - **FR-020**: System MUST clearly indicate degraded mode in command output when fallback behavior is used.
+- **FR-021**: System MUST provide a `wtf` command that runs parallel repository diagnostics covering branch drift, working tree cleanliness, merge or rebase state, unresolved conflicts, detached HEAD state, latest CI conclusion, and merge queue risk.
+- **FR-022**: System MUST summarize `wtf` diagnostic findings by urgency and offer a fix-oriented recommendation when one or more faults are detected.
+- **FR-023**: System MUST degrade gracefully in `wtf` when optional diagnostics such as GitHub CLI or remote metadata are unavailable, while still returning local repository findings.
 
 ### User Experience Consistency Requirements *(mandatory for user-facing changes)*
 
@@ -158,6 +163,7 @@ As a developer, I can run fix, undo, and check commands to recover from common g
 - **SC-005**: 100% of command outputs follow the defined response structure (summary, risk, recommendation, detail).
 - **SC-006**: 95th percentile response time for status, explain, and check remains under 2 seconds for the defined repository size threshold.
 - **SC-007**: At least 95% of users can complete AI provider setup (provider selection or custom URL plus API key) without external documentation.
+- **SC-008**: At least 90% of simulated multi-fault repository states produce a correct top-priority diagnosis and actionable fix recommendation through `sg wtf`.
 
 ## Assumptions
 
