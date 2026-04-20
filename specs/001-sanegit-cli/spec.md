@@ -5,6 +5,16 @@
 **Status**: Draft  
 **Input**: User description: "Build sanegit - a CLI that makes git usable by predicting problems, fixing them automatically, and explaining in plain English."
 
+## Clarifications
+
+### Session 2026-04-21
+
+- Q: Where should API credentials be sourced and persisted for AI provider access? -> A: Support secure keychain by default with environment variable override.
+- Q: What custom endpoint policy should apply for user-provided AI API URLs? -> A: Allow any custom URL, including HTTP.
+- Q: What should happen when the AI provider is unavailable during command execution? -> A: Continue with non-AI fallback output and show degraded-mode notice.
+- Q: How should API keys be stored locally? -> A: Store only key reference locally; actual key stays in OS keychain or environment variable.
+- Q: Which predefined AI providers should be included initially? -> A: OpenAI, Anthropic, Google (Gemini), and Mistral.
+
 ## User Scenarios & Testing *(mandatory)*
 
 <!--
@@ -100,10 +110,14 @@ As a developer, I can run fix, undo, and check commands to recover from common g
 - **FR-010**: System MUST display user-friendly errors with clear recovery guidance when automatic resolution is not possible.
 - **FR-011**: System MUST log critical command actions and outcomes in a way that supports troubleshooting and trust.
 - **FR-012**: System MUST offer consistent command help and output structure across status, commit, push, check, fix, undo, and explain workflows.
-- **FR-013**: System MUST allow users to choose from a list of popular AI API providers when configuring AI-assisted features.
-- **FR-014**: System MUST allow users to provide a custom AI API base URL instead of selecting a predefined provider.
-- **FR-015**: System MUST allow users to configure an API key for the selected provider or custom URL before AI-assisted operations run.
-- **FR-016**: System MUST validate AI configuration completeness and provide actionable guidance when provider, URL, or API key settings are missing or invalid.
+- **FR-013**: System MUST allow users to choose from predefined AI API providers: OpenAI, Anthropic, Google (Gemini), and Mistral.
+- **FR-014**: System MUST allow users to provide any custom AI API base URL, including HTTP endpoints, instead of selecting a predefined provider.
+- **FR-015**: System MUST store only a non-secret credential reference in project-local configuration; plaintext API keys MUST NOT be stored in local config files.
+- **FR-016**: System MUST retrieve API credentials from OS secure keychain and support environment variable override for non-interactive and CI workflows.
+- **FR-017**: System MUST validate AI configuration completeness and provide actionable guidance when provider, URL, keychain credential, or environment override is missing or invalid.
+- **FR-018**: System MUST display an explicit risk warning when a non-HTTPS AI API URL is configured.
+- **FR-019**: System MUST continue command execution using non-AI fallback behavior when AI provider calls fail or timeout.
+- **FR-020**: System MUST clearly indicate degraded mode in command output when fallback behavior is used.
 
 ### User Experience Consistency Requirements *(mandatory for user-facing changes)*
 
