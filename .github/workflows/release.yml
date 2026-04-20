@@ -45,9 +45,14 @@ jobs:
           echo "package_tgz=${PACKAGE_TGZ}" >> "$GITHUB_OUTPUT"
 
       - name: Publish to npm
-        run: npm publish --access public --provenance
+        run: npm publish --access public --provenance --registry https://registry.npmjs.org
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to GitHub Package Registry
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
