@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-04-21
+
+### Fixed
+- Added `prepublishOnly` build step to ensure `dist/` is always compiled before npm publish
+- Corrected missing compiled output in published npm package
+
 ## [0.1.0] - 2026-04-21
 
 ### Added
@@ -28,4 +34,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Added `repository.url` to `package.json` to satisfy npm provenance validation
 
+[0.1.1]: https://github.com/ntufar/sanegit/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ntufar/sanegit/releases/tag/v0.1.0

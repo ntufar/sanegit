@@ -1,6 +1,6 @@
 {
   "name": "sanegit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "SaneGit Command Assistant CLI",
   "repository": {
     "type": "git",
@@ -17,6 +17,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build",
     "dev": "tsx src/cli.ts",
     "lint": "eslint .",
     "format": "prettier --write .",
