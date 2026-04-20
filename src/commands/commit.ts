@@ -1,12 +1,27 @@
 import { runGit } from "../core/git.js";
 import { buildCommitPlan } from "../core/commitPlanner.js";
 import { writeOutput } from "../core/output.js";
+import { checkAIConfigured } from "../core/aiCheck.js";
 import { logEvent } from "../core/telemetry.js";
 
 export async function runCommit(
   cwd: string = process.cwd(),
   confirm: (message: string) => Promise<boolean> = async () => false,
 ): Promise<void> {
+  // Check AI configuration first and exit early if not configured
+  const aiConfigured = await checkAIConfigured(cwd, "commit");
+  if (!aiConfigured) {
+    await logEvent(
+      {
+        command: "commit",
+        outcome: "degraded",
+        detail: "AI provider not configured",
+      },
+      cwd,
+    );
+    return;
+  }
+
   const plan = await buildCommitPlan(cwd);
 
   writeOutput({
