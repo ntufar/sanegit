@@ -13,7 +13,7 @@
   - `sg undo`
   - `sg explain`
   - `sg wtf`
-  - `sg ai configure`
+  - `sg ai-configure`
 
 ## Universal Output Contract
 
@@ -101,7 +101,7 @@ All commands MUST emit consistent sections:
 
 ## AI Provider Configuration Contract
 
-### `sg ai configure` (interactive setup flow)
+### `sg ai-configure` (setup flow)
 
 - Required selections:
   - provider: `openai|anthropic|gemini|mistral|custom`

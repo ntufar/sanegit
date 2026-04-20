@@ -15,11 +15,11 @@ description: "Task list for SaneGit Command Assistant implementation"
 
 **Purpose**: Initialize the TypeScript CLI workspace and baseline developer tooling.
 
-- [ ] T001 Create npm CLI package scaffold in package.json
-- [ ] T002 Create TypeScript build configuration in tsconfig.json
-- [ ] T003 [P] Configure Vitest test runner in vitest.config.ts
-- [ ] T004 [P] Configure linting, formatting, and ignore rules in eslint.config.js and .gitignore
-- [ ] T005 Create CLI bootstrap and bin wiring in src/cli.ts and package.json
+- [X] T001 Create npm CLI package scaffold in package.json
+- [X] T002 Create TypeScript build configuration in tsconfig.json
+- [X] T003 [P] Configure Vitest test runner in vitest.config.ts
+- [X] T004 [P] Configure linting, formatting, and ignore rules in eslint.config.js and .gitignore
+- [X] T005 Create CLI bootstrap and bin wiring in src/cli.ts and package.json
 
 ---
 
@@ -29,17 +29,17 @@ description: "Task list for SaneGit Command Assistant implementation"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T006 [P] Implement git process wrapper in src/core/git.ts
-- [ ] T007 [P] Implement repository-local memory persistence in src/core/memory.ts
-- [ ] T008 [P] Implement AI prompt catalog and provider adapters in src/ai/prompts.ts and src/ai/providers.ts
-- [ ] T009 Implement configuration and credential resolution in src/core/config.ts
-- [ ] T010 Implement shared output formatting and risk rendering in src/core/output.ts
-- [ ] T011 Implement baseline prediction engine in src/core/predictor.ts
-- [ ] T012 Implement telemetry and audit event helpers in src/core/telemetry.ts
-- [ ] T013 Implement interactive AI configuration command in src/commands/ai-configure.ts and src/cli.ts
-- [ ] T014 [P] Create AI configure command contract test in tests/contract/ai-configure.contract.test.ts
-- [ ] T015 [P] Create AI configuration integration scenarios for provider selection, custom URL, insecure HTTP warning, keychain/env credential resolution, and invalid configuration handling in tests/integration/ai-configure.integration.test.ts
-- [ ] T016 Create fixture repository harness in tests/helpers/repoHarness.ts and tests/integration/fixtures/.gitkeep
+- [X] T006 [P] Implement git process wrapper in src/core/git.ts
+- [X] T007 [P] Implement repository-local memory persistence in src/core/memory.ts
+- [X] T008 [P] Implement AI prompt catalog and provider adapters in src/ai/prompts.ts and src/ai/providers.ts
+- [X] T009 Implement configuration and credential resolution in src/core/config.ts
+- [X] T010 Implement shared output formatting and risk rendering in src/core/output.ts
+- [X] T011 Implement baseline prediction engine in src/core/predictor.ts
+- [X] T012 Implement telemetry and audit event helpers in src/core/telemetry.ts
+- [X] T013 Implement interactive AI configuration command in src/commands/ai-configure.ts and src/cli.ts
+- [X] T014 [P] Create AI configure command contract test in tests/contract/ai-configure.contract.test.ts
+- [X] T015 [P] Create AI configuration integration scenarios for provider selection, custom URL, insecure HTTP warning, keychain/env credential resolution, and invalid configuration handling in tests/integration/ai-configure.integration.test.ts
+- [X] T016 Create fixture repository harness in tests/helpers/repoHarness.ts and tests/integration/fixtures/.gitkeep
 
 **Checkpoint**: Foundation ready. User story implementation can now begin.
 
@@ -53,20 +53,20 @@ description: "Task list for SaneGit Command Assistant implementation"
 
 ### Tests for User Story 1
 
-- [ ] T017 [P] [US1] Create status command contract test in tests/contract/status.contract.test.ts
-- [ ] T018 [P] [US1] Create explain command contract and degraded-mode test in tests/contract/explain.contract.test.ts
-- [ ] T019 [P] [US1] Create status integration scenarios in tests/integration/status.integration.test.ts
-- [ ] T020 [P] [US1] Create explain integration scenarios in tests/integration/explain.integration.test.ts
+- [X] T017 [P] [US1] Create status command contract test in tests/contract/status.contract.test.ts
+- [X] T018 [P] [US1] Create explain command contract and degraded-mode test in tests/contract/explain.contract.test.ts
+- [X] T019 [P] [US1] Create status integration scenarios in tests/integration/status.integration.test.ts
+- [X] T020 [P] [US1] Create explain integration scenarios in tests/integration/explain.integration.test.ts
 
 ### Implementation for User Story 1
 
-- [ ] T021 [P] [US1] Implement repository snapshot assembly in src/core/repositorySnapshot.ts
-- [ ] T022 [P] [US1] Implement status command in src/commands/status.ts
-- [ ] T023 [P] [US1] Implement explain command with AI fallback in src/commands/explain.ts
-- [ ] T024 [US1] Extend output formatting for summary/risk/recommendation/detail sections in src/core/output.ts
-- [ ] T025 [US1] Add explanation service orchestration in src/core/explainer.ts
-- [ ] T026 [US1] Wire status and explain commands into src/cli.ts
-- [ ] T027 [US1] Emit telemetry for status and explain outcomes in src/core/telemetry.ts
+- [X] T021 [P] [US1] Implement repository snapshot assembly in src/core/repositorySnapshot.ts
+- [X] T022 [P] [US1] Implement status command in src/commands/status.ts
+- [X] T023 [P] [US1] Implement explain command with AI fallback in src/commands/explain.ts
+- [X] T024 [US1] Extend output formatting for summary/risk/recommendation/detail sections in src/core/output.ts
+- [X] T025 [US1] Add explanation service orchestration in src/core/explainer.ts
+- [X] T026 [US1] Wire status and explain commands into src/cli.ts
+- [X] T027 [US1] Emit telemetry for status and explain outcomes in src/core/telemetry.ts
 
 **Checkpoint**: User Story 1 is fully functional and independently testable.
 
@@ -80,20 +80,20 @@ description: "Task list for SaneGit Command Assistant implementation"
 
 ### Tests for User Story 2
 
-- [ ] T028 [P] [US2] Create commit command contract test in tests/contract/commit.contract.test.ts
-- [ ] T029 [P] [US2] Create push command contract test in tests/contract/push.contract.test.ts
-- [ ] T030 [P] [US2] Create commit integration scenarios in tests/integration/commit.integration.test.ts
-- [ ] T031 [P] [US2] Create push integration scenarios in tests/integration/push.integration.test.ts
+- [X] T028 [P] [US2] Create commit command contract test in tests/contract/commit.contract.test.ts
+- [X] T029 [P] [US2] Create push command contract test in tests/contract/push.contract.test.ts
+- [X] T030 [P] [US2] Create commit integration scenarios in tests/integration/commit.integration.test.ts
+- [X] T031 [P] [US2] Create push integration scenarios in tests/integration/push.integration.test.ts
 
 ### Implementation for User Story 2
 
-- [ ] T032 [P] [US2] Implement commit planning service in src/core/commitPlanner.ts
-- [ ] T033 [P] [US2] Implement commit command in src/commands/commit.ts
-- [ ] T034 [P] [US2] Implement push command in src/commands/push.ts
-- [ ] T035 [US2] Extend prediction engine for remote and merge-queue risk checks in src/core/predictor.ts
-- [ ] T036 [US2] Add push safety orchestration in src/core/pushSafety.ts
-- [ ] T037 [US2] Wire commit and push commands into src/cli.ts
-- [ ] T038 [US2] Emit telemetry for commit and push decisions in src/core/telemetry.ts
+- [X] T032 [P] [US2] Implement commit planning service in src/core/commitPlanner.ts
+- [X] T033 [P] [US2] Implement commit command in src/commands/commit.ts
+- [X] T034 [P] [US2] Implement push command in src/commands/push.ts
+- [X] T035 [US2] Extend prediction engine for remote and merge-queue risk checks in src/core/predictor.ts
+- [X] T036 [US2] Add push safety orchestration in src/core/pushSafety.ts
+- [X] T037 [US2] Wire commit and push commands into src/cli.ts
+- [X] T038 [US2] Emit telemetry for commit and push decisions in src/core/telemetry.ts
 
 **Checkpoint**: User Stories 1 and 2 both work independently.
 
@@ -107,24 +107,24 @@ description: "Task list for SaneGit Command Assistant implementation"
 
 ### Tests for User Story 3
 
-- [ ] T039 [P] [US3] Create check command contract test in tests/contract/check.contract.test.ts
-- [ ] T040 [P] [US3] Create fix and undo contract tests in tests/contract/recovery.contract.test.ts
-- [ ] T041 [P] [US3] Create check integration scenarios in tests/integration/check.integration.test.ts
-- [ ] T042 [P] [US3] Create fix integration scenarios in tests/integration/fix.integration.test.ts
-- [ ] T043 [P] [US3] Create undo integration scenarios in tests/integration/undo.integration.test.ts
-- [ ] T044 [P] [US3] Create wtf command contract test in tests/contract/wtf.contract.test.ts
-- [ ] T045 [P] [US3] Create wtf integration scenarios in tests/integration/wtf.integration.test.ts
+- [X] T039 [P] [US3] Create check command contract test in tests/contract/check.contract.test.ts
+- [X] T040 [P] [US3] Create fix and undo contract tests in tests/contract/recovery.contract.test.ts
+- [X] T041 [P] [US3] Create check integration scenarios in tests/integration/check.integration.test.ts
+- [X] T042 [P] [US3] Create fix integration scenarios in tests/integration/fix.integration.test.ts
+- [X] T043 [P] [US3] Create undo integration scenarios in tests/integration/undo.integration.test.ts
+- [X] T044 [P] [US3] Create wtf command contract test in tests/contract/wtf.contract.test.ts
+- [X] T045 [P] [US3] Create wtf integration scenarios in tests/integration/wtf.integration.test.ts
 
 ### Implementation for User Story 3
 
-- [ ] T046 [P] [US3] Implement check command in src/commands/check.ts
-- [ ] T047 [P] [US3] Implement fix command in src/commands/fix.ts
-- [ ] T048 [P] [US3] Implement undo command in src/commands/undo.ts
-- [ ] T049 [P] [US3] Implement panic-button diagnosis command in src/commands/wtf.ts
-- [ ] T050 [US3] Implement recovery orchestration in src/core/resolver.ts
-- [ ] T051 [US3] Add undo planning service in src/core/undoPlanner.ts
-- [ ] T052 [US3] Wire check, fix, undo, and wtf commands into src/cli.ts
-- [ ] T053 [US3] Emit telemetry for recovery workflows in src/core/telemetry.ts
+- [X] T046 [P] [US3] Implement check command in src/commands/check.ts
+- [X] T047 [P] [US3] Implement fix command in src/commands/fix.ts
+- [X] T048 [P] [US3] Implement undo command in src/commands/undo.ts
+- [X] T049 [P] [US3] Implement panic-button diagnosis command in src/commands/wtf.ts
+- [X] T050 [US3] Implement recovery orchestration in src/core/resolver.ts
+- [X] T051 [US3] Add undo planning service in src/core/undoPlanner.ts
+- [X] T052 [US3] Wire check, fix, undo, and wtf commands into src/cli.ts
+- [X] T053 [US3] Emit telemetry for recovery workflows in src/core/telemetry.ts
 
 **Checkpoint**: All user stories are independently functional.
 
@@ -134,12 +134,12 @@ description: "Task list for SaneGit Command Assistant implementation"
 
 **Purpose**: Final improvements that affect multiple user stories.
 
-- [ ] T054 [P] Update end-user documentation and install guidance in README.md and specs/001-sanegit-cli/quickstart.md
-- [ ] T055 [P] Add benchmark and performance assertions, including release-blocking regression thresholds, in tests/integration/performance.integration.test.ts
-- [ ] T056 [P] Add core unit coverage for predictor, config, and memory services in tests/unit/coreServices.test.ts
-- [ ] T057 Harden credential redaction and insecure URL warnings in src/core/config.ts and src/core/telemetry.ts
-- [ ] T058 Verify contract, quickstart, and command help consistency in specs/001-sanegit-cli/contracts/cli-contract.md and src/cli.ts
-- [ ] T059 Run formatter, lint, typecheck, and full test scripts from package.json
+- [X] T054 [P] Update end-user documentation and install guidance in README.md and specs/001-sanegit-cli/quickstart.md
+- [X] T055 [P] Add benchmark and performance assertions, including release-blocking regression thresholds, in tests/integration/performance.integration.test.ts
+- [X] T056 [P] Add core unit coverage for predictor, config, and memory services in tests/unit/coreServices.test.ts
+- [X] T057 Harden credential redaction and insecure URL warnings in src/core/config.ts and src/core/telemetry.ts
+- [X] T058 Verify contract, quickstart, and command help consistency in specs/001-sanegit-cli/contracts/cli-contract.md and src/cli.ts
+- [X] T059 Run formatter, lint, typecheck, and full test scripts from package.json
 
 ---
 

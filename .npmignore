@@ -1,0 +1,10 @@
+src/
+tests/
+specs/
+doc/
+.vscode/
+.specify/
+.github/
+*.log
+.env*
+coverage/

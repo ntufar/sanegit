@@ -65,13 +65,17 @@ interface CommandResult {
 }
 
 // "wtf" means "What's the Fault" here; the joke stays in code comments, not user output.
-export async function runWtfCommand(options: WtfCommandOptions = {}): Promise<WtfDiagnosis> {
+export async function runWtfCommand(
+  options: WtfCommandOptions = {},
+): Promise<WtfDiagnosis> {
   const cwd = options.cwd ?? process.cwd();
 
   const diagnosis = await collectDiagnosis(cwd, options);
   const output = formatWtfDiagnosis(diagnosis);
 
-  (options.io ?? { write: (text: string) => process.stdout.write(text) }).write(`${output}\n`);
+  (options.io ?? { write: (text: string) => process.stdout.write(text) }).write(
+    `${output}\n`,
+  );
 
   if (diagnosis.issues.length > 0 && options.applyFixes) {
     const confirm = options.io?.confirm;
@@ -99,7 +103,10 @@ export function formatWtfDiagnosis(diagnosis: WtfDiagnosis): string {
   return lines.join("\n");
 }
 
-async function collectDiagnosis(cwd: string, options: WtfCommandOptions): Promise<WtfDiagnosis> {
+async function collectDiagnosis(
+  cwd: string,
+  options: WtfCommandOptions,
+): Promise<WtfDiagnosis> {
   const checks = await Promise.all([
     checkBehindMain(cwd),
     checkDirtyWorkingTree(cwd),
@@ -113,14 +120,18 @@ async function collectDiagnosis(cwd: string, options: WtfCommandOptions): Promis
   const issues = checks
     .map((check) => check.issue)
     .filter((issue): issue is WtfIssue => Boolean(issue))
-    .sort((left, right) => severityWeight(right.severity) - severityWeight(left.severity));
+    .sort(
+      (left, right) =>
+        severityWeight(right.severity) - severityWeight(left.severity),
+    );
 
   const summary = issues.length
     ? `Found ${issues.length} issue${issues.length === 1 ? "" : "s"} across repository state and delivery signals.`
     : "No active repository faults detected.";
 
-  const recommendation = issues.length
-    ? `Start with ${issues[0].title.toLowerCase()}: ${issues[0].fixHint}`
+  const primaryIssue = issues[0];
+  const recommendation = primaryIssue
+    ? `Start with ${primaryIssue.title.toLowerCase()}: ${primaryIssue.fixHint}`
     : "Repository looks healthy. Continue with your next planned git action.";
 
   const detail = checks.map((check) => `${check.name}: ${check.summary}`);
@@ -136,10 +147,17 @@ async function collectDiagnosis(cwd: string, options: WtfCommandOptions): Promis
 }
 
 async function checkBehindMain(cwd: string): Promise<WtfCheckResult> {
-  const result = await runCommand("git", ["rev-list", "--count", "HEAD..origin/main"], cwd);
+  const result = await runCommand(
+    "git",
+    ["rev-list", "--count", "HEAD..origin/main"],
+    cwd,
+  );
 
   if (result.exitCode !== 0) {
-    return unknownCheck("Behind main", "Could not compare HEAD against origin/main.");
+    return unknownCheck(
+      "Behind main",
+      "Could not compare HEAD against origin/main.",
+    );
   }
 
   const count = Number.parseInt(result.stdout.trim() || "0", 10);
@@ -160,7 +178,10 @@ async function checkBehindMain(cwd: string): Promise<WtfCheckResult> {
 async function checkDirtyWorkingTree(cwd: string): Promise<WtfCheckResult> {
   const result = await runCommand("git", ["status", "--porcelain"], cwd);
   if (result.exitCode !== 0) {
-    return unknownCheck("Dirty working tree", "Could not inspect working tree state.");
+    return unknownCheck(
+      "Dirty working tree",
+      "Could not inspect working tree state.",
+    );
   }
 
   const entries = result.stdout
@@ -174,7 +195,8 @@ async function checkDirtyWorkingTree(cwd: string): Promise<WtfCheckResult> {
       title: "Working tree is dirty",
       severity: "medium",
       detail: `${entries.length} file change(s) are staged, unstaged, or untracked.`,
-      fixHint: "review, commit, stash, or discard pending changes before risky operations",
+      fixHint:
+        "review, commit, stash, or discard pending changes before risky operations",
       autoFixable: false,
     });
   }
@@ -185,7 +207,10 @@ async function checkDirtyWorkingTree(cwd: string): Promise<WtfCheckResult> {
 async function checkInProgressOperation(cwd: string): Promise<WtfCheckResult> {
   const gitDirResult = await runCommand("git", ["rev-parse", "--git-dir"], cwd);
   if (gitDirResult.exitCode !== 0) {
-    return unknownCheck("Merge or rebase in progress", "Could not resolve .git directory.");
+    return unknownCheck(
+      "Merge or rebase in progress",
+      "Could not resolve .git directory.",
+    );
   }
 
   const gitDir = gitDirResult.stdout.trim();
@@ -198,18 +223,29 @@ async function checkInProgressOperation(cwd: string): Promise<WtfCheckResult> {
       title: "Repository is mid-operation",
       severity: "critical",
       detail: mergeHead ? "Merge state detected." : "Rebase state detected.",
-      fixHint: "complete or abort the in-progress merge/rebase before other commands",
+      fixHint:
+        "complete or abort the in-progress merge/rebase before other commands",
       autoFixable: true,
     });
   }
 
-  return passCheck("Merge or rebase in progress", "No merge or rebase markers detected.");
+  return passCheck(
+    "Merge or rebase in progress",
+    "No merge or rebase markers detected.",
+  );
 }
 
 async function checkUnresolvedConflicts(cwd: string): Promise<WtfCheckResult> {
-  const result = await runCommand("git", ["diff", "--name-only", "--diff-filter=U"], cwd);
+  const result = await runCommand(
+    "git",
+    ["diff", "--name-only", "--diff-filter=U"],
+    cwd,
+  );
   if (result.exitCode !== 0) {
-    return unknownCheck("Unresolved conflicts", "Could not inspect unresolved conflicts.");
+    return unknownCheck(
+      "Unresolved conflicts",
+      "Could not inspect unresolved conflicts.",
+    );
   }
 
   const conflictedFiles = result.stdout
@@ -232,9 +268,16 @@ async function checkUnresolvedConflicts(cwd: string): Promise<WtfCheckResult> {
 }
 
 async function checkLastCiFailed(cwd: string): Promise<WtfCheckResult> {
-  const result = await runCommand("gh", ["run", "list", "--limit", "1", "--json", "conclusion"], cwd);
+  const result = await runCommand(
+    "gh",
+    ["run", "list", "--limit", "1", "--json", "conclusion"],
+    cwd,
+  );
   if (result.exitCode !== 0) {
-    return unknownCheck("Last CI failed", "GitHub CLI unavailable or CI status could not be retrieved.");
+    return unknownCheck(
+      "Last CI failed",
+      "GitHub CLI unavailable or CI status could not be retrieved.",
+    );
   }
 
   try {
@@ -246,8 +289,10 @@ async function checkLastCiFailed(cwd: string): Promise<WtfCheckResult> {
         key: "last-ci-failed",
         title: "Latest CI run failed",
         severity: "high",
-        detail: "The latest GitHub Actions run finished with a failure conclusion.",
-        fixHint: "inspect the failing workflow before merging or pushing more changes",
+        detail:
+          "The latest GitHub Actions run finished with a failure conclusion.",
+        fixHint:
+          "inspect the failing workflow before merging or pushing more changes",
         autoFixable: false,
       });
     }
@@ -263,7 +308,10 @@ async function checkMergeQueueRisk(
   predictor: WtfCommandOptions["predictor"],
 ): Promise<WtfCheckResult> {
   if (!predictor) {
-    return unknownCheck("Merge queue risky", "Predictor not wired yet; merge queue risk check skipped.");
+    return unknownCheck(
+      "Merge queue risky",
+      "Predictor not wired yet; merge queue risk check skipped.",
+    );
   }
 
   try {
@@ -273,15 +321,22 @@ async function checkMergeQueueRisk(
         key: "merge-queue-risk",
         title: "Merge queue risk detected",
         severity: result.severity ?? "medium",
-        detail: result.summary ?? "Predictor reported elevated merge queue risk.",
+        detail:
+          result.summary ?? "Predictor reported elevated merge queue risk.",
         fixHint: "run sg check or reduce risky changes before queueing",
         autoFixable: false,
       });
     }
 
-    return passCheck("Merge queue risky", result.summary ?? "Predictor reports acceptable merge queue risk.");
+    return passCheck(
+      "Merge queue risky",
+      result.summary ?? "Predictor reports acceptable merge queue risk.",
+    );
   } catch {
-    return unknownCheck("Merge queue risky", "Predictor check failed unexpectedly.");
+    return unknownCheck(
+      "Merge queue risky",
+      "Predictor check failed unexpectedly.",
+    );
   }
 }
 
@@ -301,7 +356,11 @@ async function checkDetachedHead(cwd: string): Promise<WtfCheckResult> {
   return passCheck("Detached HEAD", `HEAD points to ${result.stdout.trim()}.`);
 }
 
-async function runCommand(command: string, args: string[], cwd: string): Promise<CommandResult> {
+async function runCommand(
+  command: string,
+  args: string[],
+  cwd: string,
+): Promise<CommandResult> {
   try {
     const result = await execFileAsync(command, args, { cwd });
     return {
