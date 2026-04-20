@@ -31,7 +31,7 @@ SaneGit (`sg`) is a CLI assistant that makes git usable by predicting problems, 
 **From npm (recommended):**
 
 ```bash
-npm install -g sanegit
+npm install -g @ntufar/sanegit
 ```
 
 **From source:**

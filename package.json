@@ -1,6 +1,6 @@
 {
-  "name": "sanegit",
-  "version": "0.1.7",
+  "name": "@ntufar/sanegit",
+  "version": "0.1.8",
   "description": "SaneGit Command Assistant CLI",
   "repository": {
     "type": "git",
