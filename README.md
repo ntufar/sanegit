@@ -2,7 +2,17 @@
 
 SaneGit is a CLI assistant that helps developers understand repository state, avoid risky pushes, and recover from git problems with plain-English guidance.
 
+📖 **[Full documentation](doc/guide.md)**
+
 ## Install
+
+**From npm (recommended):**
+
+```bash
+npm install -g sanegit
+```
+
+**From source:**
 
 ```bash
 npm install
