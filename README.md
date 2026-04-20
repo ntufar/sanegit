@@ -1,7 +1,7 @@
 # SaneGit
 
-[![npm version](https://img.shields.io/npm/v/%40ntufar%2Fsanegit.svg)](https://www.npmjs.com/package/@ntufar/sanegit)
-[![npm downloads](https://img.shields.io/npm/dm/%40ntufar%2Fsanegit.svg)](https://www.npmjs.com/package/@ntufar/sanegit)
+[![npm version](https://img.shields.io/npm/v/sanegit.svg)](https://www.npmjs.com/package/sanegit)
+[![npm downloads](https://img.shields.io/npm/dm/sanegit.svg)](https://www.npmjs.com/package/sanegit)
 
 **SaneGit** is a CLI assistant that makes git usable by predicting problems, fixing them automatically, and explaining everything in plain English.
 
@@ -24,7 +24,7 @@ Stop struggling with cryptic git errors. SaneGit helps you understand repository
 
 ```bash
 # Install from npm
-npm install -g @ntufar/sanegit
+npm install -g sanegit
 
 # Check your repository state
 cd my-project
@@ -48,7 +48,7 @@ sg wtf            # Panic-button diagnosis
 **From npm (recommended):**
 
 ```bash
-npm install -g @ntufar/sanegit
+npm install -g sanegit
 ```
 
 **From source:**
@@ -136,7 +136,7 @@ See [CHANGELOG.md](CHANGELOG.md) for release history.
 - **API Specification**: [specs/001-sanegit-cli/contracts/cli-contract.md](specs/001-sanegit-cli/contracts/cli-contract.md)
 - **Feature Spec**: [specs/001-sanegit-cli/spec.md](specs/001-sanegit-cli/spec.md)
 - **GitHub**: [github.com/ntufar/sanegit](https://github.com/ntufar/sanegit)
-- **npm**: [npmjs.com/package/@ntufar/sanegit](https://www.npmjs.com/package/@ntufar/sanegit)
+- **npm**: [npmjs.com/package/sanegit](https://www.npmjs.com/package/sanegit)
 
 ---
 
