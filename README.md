@@ -3,6 +3,8 @@
 [![npm version](https://img.shields.io/npm/v/sanegit.svg)](https://www.npmjs.com/package/sanegit)
 [![npm downloads](https://img.shields.io/npm/dm/sanegit.svg)](https://www.npmjs.com/package/sanegit)
 
+🌐 **[Visit the website →](https://ntufar.github.io/sanegit)**
+
 **SaneGit** is a CLI assistant that makes git usable by predicting problems, fixing them automatically, and explaining everything in plain English.
 
 Stop struggling with cryptic git errors. SaneGit helps you understand repository state, avoid risky pushes, recover from failures, and commit with confidence.

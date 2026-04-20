@@ -1,0 +1,24 @@
+title: SaneGit
+description: AI-powered CLI for safer, smarter git workflows
+author: Nicolai Tufar
+url: https://ntufar.github.io/sanegit
+repository: ntufar/sanegit
+
+# GitHub Pages settings
+remote_theme: null
+plugins:
+  - jekyll-seo-tag
+  - jekyll-feed
+
+# SEO
+twitter:
+  username: ntufar
+github:
+  username: ntufar
+
+# Markdown settings
+markdown: kramdown
+kramdown:
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    line_numbers: true
