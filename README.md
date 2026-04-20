@@ -15,7 +15,7 @@ Stop struggling with cryptic git errors. SaneGit helps you understand repository
 - 📝 **Smart commits** — `sg commit` proposes messages and previews changes before writing
 - 🛡️ **Safe pushes** — `sg push` predicts risks and blocks unsafe operations
 - 🔧 **Auto-recovery** — `sg fix` guides you through merge conflicts, detached HEAD, and more
-- 📊 **Diagnose fast** — `sg wtf` runs 7 parallel checks and prioritizes what to fix
+- 📊 **What's the Fault?** — `sg wtf` is your panic button. Diagnoses everything wrong and fixes it.
 - 🤖 **AI-powered** — Integrates OpenAI, Anthropic, Google, Mistral (or custom endpoints)
 - 📖 **Plain English** — Every command explains what's happening and what to do next
 - 💾 **Degrades gracefully** — Works without AI provider (rule-based fallback)
@@ -42,7 +42,7 @@ sg push           # Pre-push safety checks
 sg check          # Merge readiness assessment
 sg fix            # Recover from failures
 sg undo           # List and apply safe rollbacks
-sg wtf            # Panic-button diagnosis
+sg wtf            # Your panic button: diagnose and fix everything
 ```
 
 ## Install
@@ -74,7 +74,7 @@ npm link
 | `sg check` | Merge readiness assessment |
 | `sg fix` | Guided recovery from common git failures |
 | `sg undo` | Safe rollback options with consequences |
-| `sg wtf` | Panic-button parallel diagnosis |
+| `sg wtf` | Your panic button: diagnoses everything wrong and fixes it |
 | `sg ai-configure` | Setup AI provider integration |
 
 ## Configuration

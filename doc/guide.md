@@ -240,9 +240,9 @@ Each option shows consequences (e.g., "will discard local changes", "safe — re
 
 ---
 
-### `sg wtf`
+### What's the Fault? (`sg wtf`)
 
-Panic-button parallel diagnosis — finds everything wrong and tells you what to do.
+Your panic button. Diagnoses everything wrong and fixes it.
 
 ```bash
 sg wtf
