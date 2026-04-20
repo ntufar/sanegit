@@ -1,6 +1,6 @@
 {
   "name": "sanegit",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "SaneGit Command Assistant CLI",
   "repository": {
     "type": "git",
@@ -15,9 +15,6 @@
   "files": [
     "dist"
   ],
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "prepublishOnly": "npm run build",
