@@ -32,7 +32,7 @@ export async function createRepoHarness(options: RepoHarnessOptions = {}): Promi
     await runGit(["commit", "-m", "initial"], cwd);
 
     const bareDir = await mkdtemp(join(tmpdir(), "sanegit-remote-"));
-    await runGit(["init", "--bare"], bareDir);
+    await runGit(["init", "--bare", "--initial-branch=main"], bareDir);
     await runGit(["remote", "add", "origin", bareDir], cwd);
     await runGit(["push", "-u", "origin", "main"], cwd);
   }
