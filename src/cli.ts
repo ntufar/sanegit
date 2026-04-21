@@ -137,12 +137,31 @@ program
         );
         process.exit(1);
       }
+      // Prompt for API key / env var if not provided via flag
+      let credentialRef = options.credentialRef;
+      if (!credentialRef) {
+        const readline2 = await import("readline");
+        const rl2 = readline2.createInterface({
+          input: process.stdin,
+          output: process.stdout,
+        });
+        const answer = await new Promise<string>((resolve) => {
+          rl2.question(
+            "API key or env var name (e.g. MISTRAL_API_KEY or paste key directly): ",
+            (a) => {
+              rl2.close();
+              resolve(a.trim());
+            },
+          );
+        });
+        if (answer) {
+          credentialRef = answer;
+        }
+      }
       const input = {
         provider,
         ...(options.url ? { customBaseUrl: options.url } : {}),
-        ...(options.credentialRef
-          ? { credentialRef: options.credentialRef }
-          : {}),
+        ...(credentialRef ? { credentialRef } : {}),
       };
       await runAiConfigure(input);
     },

@@ -120,7 +120,18 @@ export function resolveCredential(
   }
 
   if (config.credentialRef) {
-    return { source: `keychain:${config.credentialRef}` };
+    // If credentialRef looks like an env var name (ALL_CAPS / underscores), resolve it from env.
+    // Otherwise treat it as a literal API key stored directly in config.
+    const isEnvVar = /^[A-Z][A-Z0-9_]*$/.test(config.credentialRef);
+    if (isEnvVar) {
+      const apiKey = env[config.credentialRef];
+      if (apiKey) {
+        return { apiKey, source: `env:${config.credentialRef}` };
+      }
+      return { source: `env:${config.credentialRef} (not set)` };
+    }
+    // Literal key stored in credentialRef (not recommended for production, but works for local dev)
+    return { apiKey: config.credentialRef, source: "config:credentialRef" };
   }
 
   return { source: "none" };
