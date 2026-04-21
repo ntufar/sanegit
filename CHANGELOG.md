@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-04-21
+
+### Added
+- `sg sync` — one-command safe branch sync with local-work preservation and conflict guidance
+- `sg ship` / `sg ship --status` — orchestrated delivery flow from preflight validation through merge completion with resumable background handoff
+- `sg split` — propose and confirm logical commit groups from mixed-intent staged changes
+- `sg who` — file-level collaborator ownership context with active PR and activity signals
+- `sg blame --explain` — line-level historical change context with plain-language rationale
+- `sg queue --team` — merge queue visibility with sequencing impact and conflict risk hints
+- `sg time-travel` — resolve natural-language temporal references into safe repository navigation actions
+- `sg pair` — lightweight pair-session lifecycle (start / status / handoff) with auditable state transitions
+- `sg doctor` — deep repository health audit with prioritized findings across reliability, hygiene, performance, and security dimensions
+- Predictive fault intelligence: `sg wtf --learn` records recurring failure patterns locally and surfaces pre-push warnings after threshold confidence is reached
+- CI-failure diagnosis: `sg wtf --fix-ci` identifies probable root cause and offers direct handoff to recovery flow
+- Hosting provider adapter layer (GitHub) for team-aware commands with graceful local fallback
+- Resumable workflow journal for multi-step commands with checkpoint recovery
+- Learned-pattern persistence and pruning bounded to 10 MB per repository
+- AI context scoping, redaction, and size-limit policy for all provider calls
+- Rollout controls for high-risk automation paths (`sg ship`, `sg wtf`)
+- Expanded test suite: contract, integration, and unit coverage for all new commands (50+ test files)
+
+### Changed
+- `sg wtf` extended with `--learn` and `--fix-ci` flags and direct remediation handoff
+- AI provider layer extended with context-scoped prompts and fallback markers
+- Repository snapshot and output structures extended for hosted-context and AI markers
+
 ## [0.1.14] - 2026-04-21
 
 ### Added
@@ -108,6 +134,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Added `repository.url` to `package.json` to satisfy npm provenance validation
 
+[0.2.0]: https://github.com/ntufar/sanegit/compare/v0.1.14...v0.2.0
 [0.1.14]: https://github.com/ntufar/sanegit/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/ntufar/sanegit/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/ntufar/sanegit/compare/v0.1.11...v0.1.12
