@@ -38,10 +38,14 @@ describe("ship integration", () => {
     vi.spyOn(resolver, "buildCheckPlan").mockResolvedValue({
       risk: "none",
       summary: "all good",
+      recommendation: "proceed with ship",
+      detail: [],
     });
     vi.spyOn(resolver, "buildFixPlan").mockResolvedValue({
       risk: "none",
       summary: "no fixes needed",
+      recommendation: "proceed with ship",
+      detail: [],
     });
 
     const run = await runShip(cwd);
@@ -60,6 +64,8 @@ describe("ship integration", () => {
     vi.spyOn(resolver, "buildCheckPlan").mockResolvedValue({
       risk: "high",
       summary: "conflict detected",
+      recommendation: "resolve conflicts before proceeding",
+      detail: ["Conflicted: file.ts"],
     });
 
     await expect(runShip(cwd)).rejects.toThrow();
