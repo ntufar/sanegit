@@ -52,6 +52,7 @@
 - [ ] T014 [US1] Implement AI-context payload creation and provider-backed diagnosis prompts in src/ai/prompts.ts, src/ai/providers.ts, and src/core/explainer.ts
 - [ ] T015 [US1] Extend panic-button diagnosis for `--learn` and `--fix-ci` modes in src/commands/wtf.ts and src/core/output.ts
 - [ ] T016 [US1] Surface learned pre-push warnings through shared predictive checks in src/core/predictor.ts and src/core/pushSafety.ts
+- [ ] T049 [US1] Implement direct remediation handoff actions from conflict/CI diagnostics in src/commands/wtf.ts and src/core/resolver.ts
 
 **Checkpoint**: `sg wtf` learns locally, explains CI/conflict failures, and stays independently testable as the MVP slice.
 
@@ -138,6 +139,10 @@
 - [ ] T043 Harden provider/config security and warning paths in src/core/config.ts, src/commands/ai-configure.ts, and src/hosting/index.ts
 - [ ] T044 Run quickstart validation and align examples with shipped command behavior in specs/002-indispensable-git-assistant/quickstart.md
 - [ ] T045 Run full quality gates via package.json (`build`, `lint`, `typecheck`, `test`) and fix any remaining issues referenced by package.json
+- [ ] T046 Implement rollout controls for high-risk automation paths in src/core/config.ts, src/commands/ship.ts, and src/commands/wtf.ts
+- [ ] T047 Add rollout-control verification coverage in tests/integration/ship.integration.test.ts and tests/integration/wtf.integration.test.ts
+- [ ] T048 Implement AI context scoping, redaction, and size-limit policy in src/core/config.ts, src/ai/providers.ts, and src/core/output.ts
+- [ ] T050 Define and execute post-release rollout-signal verification checklist (owner, signal set, pass/fail thresholds, rollback triggers, and verification window) in specs/002-indispensable-git-assistant/quickstart.md and specs/002-indispensable-git-assistant/checklists/safety.md
 
 ---
 

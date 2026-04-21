@@ -118,6 +118,14 @@ As a developer, I want natural-language historical navigation, lightweight pair 
 - **FR-022**: System MUST gracefully degrade when optional external signals are unavailable and still provide actionable local guidance.
 - **FR-023**: System MUST automatically permit full diff and file context to be sent to the configured external AI provider whenever AI-powered analysis is enabled for a command.
 - **FR-024**: System MUST clearly indicate when a command may use external AI analysis so users can distinguish local-only behavior from provider-backed behavior.
+- **FR-025**: System MUST gate high-risk automation (`sg ship` merge completion and `sg wtf --fix-ci` remediation execution) behind staged rollout controls (feature flags or equivalent) with repository-level enable/disable capability.
+
+### Operational Definitions
+
+- **Qualifying Learn-Mode Run**: A run counts toward the 10-run threshold only when `sg wtf --learn` completes successfully, observes at least one diagnosable signal (conflict, CI failure, or equivalent repository fault pattern), and is not a duplicate pattern observation within a 10-minute deduplication window.
+- **Remote-Safe Workflow Step**: Remote fetch, pull-request metadata/status polling, CI status checks, and merge queue reads are auto-runnable by default.
+- **Confirmation-Gated Action**: Local history rewrites, force-push actions, destructive working tree cleanup, and conflict auto-resolution that discards local edits require explicit confirmation.
+- **AI Context Scope and Guardrails**: Automatic provider context includes current diff and directly referenced files for the invoked command, excludes paths matching configured sensitive patterns, enforces payload size limits with deterministic truncation, and surfaces a user-visible notice when truncation occurs.
 
 ### User Experience Consistency Requirements *(mandatory for user-facing changes)*
 
