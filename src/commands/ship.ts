@@ -1,7 +1,6 @@
-import { evaluatePushSafety } from "../core/pushSafety.js";
 import { getRemoteUrl, runGit } from "../core/git.js";
-import { loadConfig } from "../core/config.js";
 import { writeOutput } from "../core/output.js";
+import { buildCheckPlan, buildFixPlan } from "../core/resolver.js";
 import {
   checkpointWorkflowRun,
   completeWorkflowRun,
@@ -16,33 +15,42 @@ function summarizeWorkflow(run: WorkflowRun): string[] {
 }
 
 export async function runShip(cwd: string = process.cwd()): Promise<WorkflowRun> {
-  const run = await startWorkflowRun("ship", ["preflight", "push", "handoff"], cwd);
-  const config = await loadConfig(cwd);
+  const run = await startWorkflowRun("ship", ["check", "fix", "push", "pr", "merge"], cwd);
 
   try {
-    await checkpointWorkflowRun(run.id, "preflight", "running", "Running push safety checks", cwd);
-    const safety = await evaluatePushSafety(cwd);
+    // 1. Check
+    await checkpointWorkflowRun(run.id, "check", "running", "Checking for conflicts", cwd);
+    const checkPlan = await buildCheckPlan(cwd);
     await checkpointWorkflowRun(
       run.id,
-      "preflight",
-      safety.allowed ? "completed" : "failed",
-      safety.reasons.join(" "),
+      "check",
+      checkPlan.risk === "none" || checkPlan.risk === "low" ? "completed" : "failed",
+      checkPlan.summary,
       cwd,
     );
-
-    if (!safety.allowed) {
-      await failWorkflowRun(run.id, "Preflight failed", cwd);
-      writeOutput({
-        summary: "Ship preflight failed.",
-        risk: safety.risk,
-        recommendation: "Resolve high-risk findings before shipping.",
-        detail: safety.reasons,
-      });
+    if (checkPlan.risk !== "none" && checkPlan.risk !== "low") {
+      await failWorkflowRun(run.id, "Check failed: " + checkPlan.summary, cwd);
       return run;
     }
 
-    const remote = await getRemoteUrl(cwd);
+    // 2. Fix
+    await checkpointWorkflowRun(run.id, "fix", "running", "Fixing issues", cwd);
+    const fixPlan = await buildFixPlan(cwd);
+    await checkpointWorkflowRun(
+      run.id,
+      "fix",
+      fixPlan.risk === "none" ? "completed" : "failed",
+      fixPlan.summary,
+      cwd,
+    );
+    if (fixPlan.risk !== "none") {
+      await failWorkflowRun(run.id, "Fix failed: " + fixPlan.summary, cwd);
+      return run;
+    }
+
+    // 3. Push
     await checkpointWorkflowRun(run.id, "push", "running", "Pushing branch", cwd);
+    const remote = await getRemoteUrl(cwd);
     if (remote) {
       const pushed = await runGit(["push"], cwd);
       await checkpointWorkflowRun(
@@ -57,54 +65,45 @@ export async function runShip(cwd: string = process.cwd()): Promise<WorkflowRun>
         return run;
       }
     } else {
-      await checkpointWorkflowRun(
-        run.id,
-        "push",
-        "completed",
-        "No remote configured; push step skipped in local mode",
-        cwd,
-      );
+      await checkpointWorkflowRun(run.id, "push", "completed", "No remote configured", cwd);
     }
 
-    if (config.commandDefaults.enableHighRiskShipAutomation) {
-      await checkpointWorkflowRun(
-        run.id,
-        "handoff",
-        "completed",
-        "Background monitoring handoff initialized",
-        cwd,
-      );
-    } else {
-      await checkpointWorkflowRun(
-        run.id,
-        "handoff",
-        "completed",
-        "High-risk ship automation disabled by rollout controls",
-        cwd,
-      );
+    // 4. PR (using gh CLI)
+    await checkpointWorkflowRun(run.id, "pr", "running", "Creating Pull Request", cwd);
+    const pr = await runGit(["gh", "pr", "create", "--fill"], cwd); // Assuming gh is configured
+    await checkpointWorkflowRun(
+      run.id,
+      "pr",
+      pr.exitCode === 0 ? "completed" : "failed",
+      pr.stderr || pr.stdout,
+      cwd,
+    );
+    if (pr.exitCode !== 0) {
+      await failWorkflowRun(run.id, "PR creation failed", cwd);
+      return run;
     }
+
+    // 5. Merge (using gh CLI)
+    await checkpointWorkflowRun(run.id, "merge", "running", "Merging Pull Request", cwd);
+    const merge = await runGit(["gh", "pr", "merge", "--merge", "--auto"], cwd);
+    await checkpointWorkflowRun(
+      run.id,
+      "merge",
+      merge.exitCode === 0 ? "completed" : "failed",
+      merge.stderr || merge.stdout,
+      cwd,
+    );
+    if (merge.exitCode !== 0) {
+      await failWorkflowRun(run.id, "Merge failed", cwd);
+      return run;
+    }
+
     await completeWorkflowRun(run.id, cwd);
-
-    writeOutput({
-      summary: "Ship workflow handed off for background completion.",
-      risk: config.commandDefaults.enableHighRiskShipAutomation ? "low" : "medium",
-      recommendation: "Use sg ship status to monitor CI/merge completion.",
-      detail: [
-        "Synchronous setup complete; background tracking active.",
-        ...(config.commandDefaults.enableHighRiskShipAutomation
-          ? []
-          : ["High-risk automation remains disabled by rollout controls."]),
-      ],
-      hostedContextSource: remote ? "remote" : "local",
-    });
+    writeOutput({ summary: "Ship workflow completed successfully." });
 
     return run;
   } catch (error) {
-    await failWorkflowRun(
-      run.id,
-      error instanceof Error ? error.message : String(error),
-      cwd,
-    );
+    await failWorkflowRun(run.id, error instanceof Error ? error.message : String(error), cwd);
     throw error;
   }
 }
