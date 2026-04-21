@@ -297,30 +297,34 @@ async function checkInProgressOperation(cwd: string): Promise<WtfCheckResult> {
   );
 }
 
+import { getConflictedFiles, getBlameForLine } from "../core/forensics.js";
+
+// ... (rest of the imports)
+
 async function checkUnresolvedConflicts(cwd: string): Promise<WtfCheckResult> {
-  const result = await runCommand(
-    "git",
-    ["diff", "--name-only", "--diff-filter=U"],
-    cwd,
-  );
-  if (result.exitCode !== 0) {
-    return unknownCheck(
-      "Unresolved conflicts",
-      "Could not inspect unresolved conflicts.",
-    );
-  }
-
-  const conflictedFiles = result.stdout
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
-
+  const conflictedFiles = await getConflictedFiles(cwd);
+  
   if (conflictedFiles.length > 0) {
+    const forensicDetails: string[] = [];
+    
+    for (const file of conflictedFiles.slice(0, 3)) {
+      const blame = await getBlameForLine(file, 1, cwd);
+      if (blame) {
+        forensicDetails.push(`${file} (last modified by ${blame.author}: ${blame.summary})`);
+      } else {
+        forensicDetails.push(`${file} (forensics unavailable)`);
+      }
+    }
+    
+    if (conflictedFiles.length > 3) {
+      forensicDetails.push(`... and ${conflictedFiles.length - 3} more files.`);
+    }
+
     return failCheck("Unresolved conflicts", {
       key: "unresolved-conflicts",
       title: "Unresolved conflicts detected",
       severity: "critical",
-      detail: `${conflictedFiles.length} conflicted file(s) still need resolution.`,
+      detail: `${conflictedFiles.length} conflicted file(s) found:\n${forensicDetails.join("\n")}`,
       fixHint: "resolve conflicts or run sg fix before continuing",
       autoFixable: true,
     });
