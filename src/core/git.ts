@@ -6,24 +6,33 @@ export interface GitResult {
   exitCode: number;
 }
 
+export interface RunGitOptions {
+  throw?: boolean;
+}
+
 export async function runGit(
   args: string[],
   cwd: string = process.cwd(),
+  options?: RunGitOptions,
 ): Promise<GitResult> {
+  const throwOnError = options?.throw ?? true;
   try {
     const result = await execa("git", args, { cwd });
     return { stdout: result.stdout, stderr: result.stderr, exitCode: 0 };
   } catch (error) {
-    const failed = error as {
-      stdout?: string;
-      stderr?: string;
-      exitCode?: number;
-    };
-    return {
-      stdout: failed.stdout ?? "",
-      stderr: failed.stderr ?? "",
-      exitCode: failed.exitCode ?? 1,
-    };
+    if (!throwOnError) {
+      const failed = error as {
+        stdout?: string;
+        stderr?: string;
+        exitCode?: number;
+      };
+      return {
+        stdout: failed.stdout ?? "",
+        stderr: failed.stderr ?? "",
+        exitCode: failed.exitCode ?? 1,
+      };
+    }
+    throw error;
   }
 }
 

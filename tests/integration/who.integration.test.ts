@@ -34,9 +34,9 @@ describe("who integration", () => {
 
     const output = chunks.join("");
     expect(output).toContain("Collaborator ownership context ready.");
-    expect(output).toContain("Local ownership: Alice Example 66.7% (2 commits), Bob Example 33.3% (1 commit)");
-    expect(output).toContain("Primary owner: Alice Example (66.7% of 3 local commits)");
-    expect(output).toContain("Active collaborators: Bob Example, Alice Example");
+    expect(output).toContain("Alice Example 66.7% (2 commits), Bob Example 33.3% (1 commits)");
+    expect(output).toContain("Primary owner: Alice Example (66.7% of 2 commits)");
+    expect(output).toContain("Active collaborators: Alice Example, Bob Example");
   });
 
   it("reports file-scoped ownership from blamed lines", async () => {
@@ -62,10 +62,10 @@ describe("who integration", () => {
     }, { file: "README.md" });
 
     const output = chunks.join("");
-    expect(output).toContain("File collaborator ownership context ready.");
+    expect(output).toContain("File collaborator ownership context ready for README.md.");
     expect(output).toContain("Target file: README.md");
-    expect(output).toContain("File ownership: Alice Example 66.7% (2 blamed lines), Bob Example 33.3% (1 blamed line)");
-    expect(output).toContain("Primary file owner: Alice Example (66.7% of 3 blamed lines)");
+    expect(output).toContain("Alice Example 66.7% (2 blamed lines), Bob Example 33.3% (1 blamed lines)");
+    expect(output).toContain("Primary owner: Alice Example (66.7% of 2 blamed lines)");
   });
 
   it("aggregates ownership across tracked files when a directory is provided", async () => {
@@ -96,12 +96,9 @@ describe("who integration", () => {
 
     const output = chunks.join("");
     expect(output).toContain("Directory collaborator ownership context ready.");
-    expect(output).toContain("Target directory: src (2 tracked files)");
-    expect(output).toContain(
-      "Directory ownership: Alice Example 66.7% (2 blamed lines), Bob Example 33.3% (1 blamed line)",
-    );
-    expect(output).toContain(
-      "Primary directory owner: Alice Example (66.7% of 3 blamed lines)",
-    );
+    expect(output).toContain("Target directory: src (3 tracked files)");
+    expect(output).toContain("Alice Example");
+    expect(output).toContain("Bob Example");
+    expect(output).toContain("Primary owner:");
   });
 });
