@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="SaneGit - AI-powered CLI for safer, smarter git workflows">
-    <title>SaneGit - Smart Git Command Assistant</title>
+    <meta name="description" content="SaneGit (sg) — CLI that predicts git problems, suggests fixes, and explains everything in plain English. Node 22+.">
+    <title>SaneGit — Smart Git Command Assistant</title>
+    <link rel="canonical" href="https://ntufar.github.io/sanegit/">
     <style>
         * {
             margin: 0;
@@ -22,36 +23,54 @@
         header {
             background: #ffffff;
             color: #24292e;
-            padding: 60px 20px;
+            padding: 48px 20px 40px;
             text-align: center;
             border-bottom: 1px solid #e1e4e8;
         }
 
         header h1 {
             font-size: 2.5em;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             font-weight: 600;
         }
 
-        header p {
-            font-size: 1.2em;
+        header .tagline {
+            font-size: 1.15em;
             color: #586069;
-            max-width: 700px;
-            margin: 0 auto;
+            max-width: 720px;
+            margin: 0 auto 16px;
+        }
+
+        .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .badge-row a img {
+            vertical-align: middle;
         }
 
         nav {
-            background: #ffffff;
-            padding: 20px;
+            background: #fafbfc;
+            padding: 14px 16px;
             text-align: center;
             border-bottom: 1px solid #e1e4e8;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         nav a {
             color: #0366d6;
             text-decoration: none;
-            margin: 0 25px;
+            margin: 6px 12px;
             font-weight: 500;
+            font-size: 0.95em;
+            display: inline-block;
             transition: color 0.2s;
         }
 
@@ -63,67 +82,100 @@
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 50px 20px;
+            padding: 48px 20px 60px;
         }
 
         section {
-            margin-bottom: 70px;
+            margin-bottom: 64px;
         }
 
         h2 {
             color: #24292e;
-            font-size: 1.8em;
-            margin-bottom: 30px;
+            font-size: 1.65em;
+            margin-bottom: 8px;
             font-weight: 600;
+        }
+
+        .section-lead {
+            color: #586069;
+            font-size: 1.05em;
+            max-width: 760px;
+            margin-bottom: 24px;
+            line-height: 1.65;
         }
 
         h3 {
             color: #24292e;
-            font-size: 1.1em;
+            font-size: 1.05em;
             font-weight: 600;
-            margin-bottom: 12px;
+            margin: 28px 0 14px;
+        }
+
+        h3:first-of-type {
+            margin-top: 0;
+        }
+
+        .command-group-label {
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #6a737d;
+            margin: 32px 0 14px;
+            font-weight: 600;
+        }
+
+        .command-group-label:first-child {
+            margin-top: 0;
         }
 
         .feature-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 22px;
+            margin-top: 24px;
         }
 
         .feature-card {
             background: #ffffff;
-            padding: 25px;
+            padding: 22px;
             border: 1px solid #e1e4e8;
-            border-radius: 6px;
+            border-radius: 8px;
             transition: box-shadow 0.2s;
         }
 
         .feature-card:hover {
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
         }
 
         .feature-card h3 {
             color: #24292e;
-            margin-bottom: 12px;
+            margin: 0 0 10px;
+            font-size: 1.05em;
         }
 
         .feature-card p {
             color: #586069;
-            font-size: 0.95em;
-            line-height: 1.5;
+            font-size: 0.92em;
+            line-height: 1.55;
+        }
+
+        .feature-card code {
+            background: #f6f8fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.9em;
         }
 
         .code-block {
             background: #f6f8fa;
             color: #24292e;
-            padding: 16px;
-            border-radius: 6px;
+            padding: 16px 18px;
+            border-radius: 8px;
             overflow-x: auto;
-            margin: 20px 0;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.85em;
-            line-height: 1.5;
+            margin: 14px 0;
+            font-family: ui-monospace, 'Monaco', 'Menlo', monospace;
+            font-size: 0.82em;
+            line-height: 1.55;
             border: 1px solid #e1e4e8;
         }
 
@@ -142,12 +194,13 @@
             display: inline-block;
             background: #0366d6;
             color: white;
-            padding: 12px 28px;
+            padding: 11px 22px;
             border-radius: 6px;
             text-decoration: none;
             font-weight: 500;
+            font-size: 0.95em;
             transition: background 0.2s;
-            margin: 10px 10px 10px 0;
+            margin: 8px 8px 8px 0;
             border: 1px solid #0366d6;
         }
 
@@ -168,38 +221,106 @@
 
         .commands-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 14px;
+            margin-top: 8px;
         }
 
         .command-item {
             background: #ffffff;
             border: 1px solid #e1e4e8;
-            padding: 20px;
-            border-radius: 6px;
+            padding: 16px 18px;
+            border-radius: 8px;
         }
 
         .command-item code {
             background: #f6f8fa;
-            padding: 3px 6px;
-            border-radius: 3px;
+            padding: 3px 7px;
+            border-radius: 4px;
             color: #005cc5;
-            font-family: monospace;
+            font-family: ui-monospace, monospace;
             font-weight: 600;
+            font-size: 0.88em;
+            word-break: break-word;
         }
 
         .command-item p {
             color: #586069;
-            font-size: 0.9em;
+            font-size: 0.88em;
             margin-top: 8px;
             line-height: 1.5;
+        }
+
+        .steps {
+            list-style: none;
+            counter-reset: step;
+            margin-top: 20px;
+        }
+
+        .steps li {
+            counter-increment: step;
+            position: relative;
+            padding-left: 48px;
+            margin-bottom: 18px;
+            color: #586069;
+            line-height: 1.55;
+        }
+
+        .steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 32px;
+            height: 32px;
+            background: #0366d6;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .steps li strong {
+            color: #24292e;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        .panel {
+            background: #f6f8fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .panel h3 {
+            margin-top: 0;
+            font-size: 1em;
+        }
+
+        .panel ul {
+            margin-top: 10px;
+            padding-left: 20px;
+            color: #586069;
+            font-size: 0.92em;
+        }
+
+        .panel li {
+            margin-bottom: 6px;
         }
 
         footer {
             background: #24292e;
             color: #ffffff;
-            padding: 40px 20px;
+            padding: 36px 20px;
             text-align: center;
             border-top: 1px solid #e1e4e8;
         }
@@ -216,38 +337,64 @@
         footer p {
             margin-bottom: 8px;
             color: #d1d5da;
+            font-size: 0.95em;
         }
 
         .info-box {
             background: #f6f8fa;
-            padding: 20px;
-            border-radius: 6px;
+            padding: 18px 20px;
+            border-radius: 8px;
             border-left: 4px solid #0366d6;
-            margin-top: 30px;
+            margin-top: 20px;
+        }
+
+        .info-box.warn {
+            border-left-color: #d4880c;
         }
 
         .info-box h3 {
             color: #0366d6;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .info-box.warn h3 {
+            color: #b08800;
         }
 
         .info-box p {
             color: #586069;
             line-height: 1.6;
+            font-size: 0.92em;
+        }
+
+        .output-sample {
+            font-family: ui-monospace, monospace;
+            font-size: 0.8em;
+            color: #24292e;
+            background: #fff;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            padding: 14px 16px;
+            margin-top: 12px;
+            line-height: 1.5;
+        }
+
+        .output-sample .k {
+            color: #6f42c1;
         }
 
         @media (max-width: 768px) {
             header h1 {
-                font-size: 1.8em;
+                font-size: 1.75em;
             }
 
-            header p {
+            header .tagline {
                 font-size: 1em;
             }
 
             nav a {
-                display: inline-block;
-                margin: 10px 15px;
+                margin: 4px 8px;
             }
 
             .feature-grid {
@@ -263,191 +410,303 @@
 <body>
     <header>
         <h1>SaneGit</h1>
-        <p>AI-powered CLI for safer, smarter git workflows. Write better commits, catch risks, and work with confidence.</p>
+        <p class="tagline">A command-line assistant that makes git usable: predict problems, suggest safe fixes, and explain what is going on in plain English. Binary: <code>sg</code>.</p>
+        <div class="badge-row">
+            <a href="https://www.npmjs.com/package/sanegit" title="npm package"><img src="https://img.shields.io/npm/v/sanegit.svg" alt="npm version" height="20"></a>
+            <a href="https://www.npmjs.com/package/sanegit" title="Monthly downloads"><img src="https://img.shields.io/npm/dm/sanegit.svg" alt="npm downloads" height="20"></a>
+            <img src="https://img.shields.io/badge/node-%3E%3D22-339933?logo=node.js&logoColor=white" alt="Requires Node.js 22 or newer" height="20">
+        </div>
     </header>
 
     <nav>
         <a href="#features">Features</a>
         <a href="#commands">Commands</a>
-        <a href="#quickstart">Quick Start</a>
+        <a href="#workflow">Workflow</a>
+        <a href="#install">Install</a>
+        <a href="#configuration">Configuration</a>
+        <a href="#quickstart">Quick start</a>
         <a href="#resources">Resources</a>
     </nav>
 
     <div class="container">
-        <!-- Features Section -->
         <section id="features">
             <h2>Features</h2>
+            <p class="section-lead">Every command prints the same four-part structure—summary, risk, recommendation, and optional detail—so you can scan output quickly or pipe it to tooling.</p>
             <div class="feature-grid">
                 <div class="feature-card">
-                    <h3>Smart Commits</h3>
-                    <p>Generate meaningful commit messages automatically using AI, with your approval before writing to git.</p>
+                    <h3>Repository health</h3>
+                    <p><code>sg status</code> summarizes branch position, working tree, and what to do next without reading raw git porcelain.</p>
                 </div>
                 <div class="feature-card">
-                    <h3>Change Explanation</h3>
-                    <p>Understand your changes in plain English with risk assessment and recommended next steps.</p>
+                    <h3>Smart commits (AI)</h3>
+                    <p><code>sg commit</code> builds a commit plan from staged changes and asks before writing. Requires a configured provider.</p>
                 </div>
                 <div class="feature-card">
-                    <h3>Safe Pushes</h3>
-                    <p>Analyze your branch before pushing. Detect merge conflicts, CI failures, and safety concerns.</p>
+                    <h3>Change explanation (AI)</h3>
+                    <p><code>sg explain</code> turns diffs into plain-language intent and next steps. Requires a configured provider.</p>
                 </div>
                 <div class="feature-card">
-                    <h3>Repository Health</h3>
-                    <p>Run <code>sg wtf</code> when things feel broken. It is your panic button and walks through what's wrong and how to fix it.</p>
+                    <h3>Safe pushes</h3>
+                    <p><code>sg push</code> evaluates divergence, conflicts, and hosted signals before you publish.</p>
                 </div>
                 <div class="feature-card">
-                    <h3>One-Command Delivery</h3>
-                    <p>Sync, ship, and split commits in one guided flow. No more repetitive command sequences for routine delivery.</p>
+                    <h3>Merge readiness</h3>
+                    <p><code>sg check</code> scores integration risk against your target branch—not generic “commit linting.”</p>
                 </div>
                 <div class="feature-card">
-                    <h3>Predictive Fault Intelligence</h3>
-                    <p>SaneGit learns from recurring failures and warns you before you push into the same problems again.</p>
+                    <h3>Guided recovery</h3>
+                    <p><code>sg fix</code> walks common failure modes (conflicts, detached HEAD, interrupted rebase) with safe, confirmable steps.</p>
                 </div>
                 <div class="feature-card">
-                    <h3>Team Change Awareness</h3>
-                    <p>See who owns what, why lines changed, and when to merge — so you avoid stepping on active work.</p>
+                    <h3>Panic diagnostics</h3>
+                    <p><code>sg wtf</code> runs urgent checks. Add <code>--learn</code> to record fault signals or <code>--fix-ci</code> for CI-focused remediation hints.</p>
                 </div>
                 <div class="feature-card">
-                    <h3>Advanced Recovery</h3>
-                    <p>Navigate history in plain English, run deep health audits, and manage pair sessions — all reversible where it matters.</p>
+                    <h3>Delivery &amp; history</h3>
+                    <p><code>sg sync</code>, <code>sg ship</code> / <code>sg ship --status</code>, <code>sg split</code>, and <code>sg time-travel --to …</code> cover sync, ship pipelines, splitting commits, and safe navigation—including natural-language refs.</p>
                 </div>
                 <div class="feature-card">
-                    <h3>Offline Support</h3>
-                    <p>All commands work without AI configured. Use rule-based analysis anywhere.</p>
+                    <h3>Team &amp; ownership</h3>
+                    <p><code>sg who</code> (optional <code>--file</code> for a file or directory), <code>sg queue --team</code>, and <code>sg blame --file … --line … --explain</code> add hosted and local context.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Deep checks</h3>
+                    <p><code>sg doctor</code> reports repository health signals; <code>sg pair --action …</code> supports lightweight pair handoffs.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Provider choice</h3>
+                    <p>OpenAI, Anthropic, Google (Gemini), Mistral, or a custom HTTP endpoint via <code>sg ai-configure</code> (use <code>--url</code> for custom bases).</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Degraded mode</h3>
+                    <p>When AI is missing or unreachable, commands that do not strictly need a model fall back to deterministic rules. AI-only commands exit with a clear message.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Commands Section -->
         <section id="commands">
             <h2>Commands</h2>
+            <p class="section-lead">Install the <code>sanegit</code> package globally; invoke everything as <code>sg &lt;command&gt;</code>.</p>
+
+            <p class="command-group-label">Core loop</p>
             <div class="commands-grid">
                 <div class="command-item">
                     <code>sg status</code>
-                    <p>Show repository status, unstaged changes, and branch info.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg sync</code>
-                    <p>Preserve local work and sync safely with mainline in one guided flow.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg ship --status</code>
-                    <p>Run delivery flow and inspect tracked background progress to merge readiness.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg split</code>
-                    <p>Propose logical commit groups from staged mixed-intent changes.</p>
+                    <p>Plain-English repository state and recommended next action.</p>
                 </div>
                 <div class="command-item">
                     <code>sg explain</code>
-                    <p>Explain staged changes in plain English with risk and next steps.</p>
+                    <p>Explain current changes (requires AI).</p>
                 </div>
                 <div class="command-item">
                     <code>sg commit</code>
-                    <p>Generate and create smart commit messages with confirmation.</p>
+                    <p>Proposed commit from staged files; confirms before <code>git commit</code> (requires AI).</p>
                 </div>
                 <div class="command-item">
                     <code>sg push</code>
-                    <p>Analyze branch before pushing. Warn about risks and conflicts.</p>
+                    <p>Pre-push risk checks and safer publish flow.</p>
                 </div>
                 <div class="command-item">
                     <code>sg check</code>
-                    <p>Validate commit quality and adherence to best practices.</p>
+                    <p>Merge and integration readiness vs. a target branch.</p>
                 </div>
+            </div>
+
+            <p class="command-group-label">Recovery &amp; undo</p>
+            <div class="commands-grid">
                 <div class="command-item">
                     <code>sg fix</code>
-                    <p>Auto-fix common git issues with AI suggestions.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg who</code>
-                    <p>Show collaborator ownership context and active PR signals for safer coordination.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg queue --team</code>
-                    <p>Inspect merge queue risk and team impact before entering delivery pipelines.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg doctor</code>
-                    <p>Run deep repository health diagnostics across reliability and hygiene indicators.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg blame --explain</code>
-                    <p>Show line-level historical change context with plain-language rationale.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg time-travel</code>
-                    <p>Navigate to any point in history using natural-language references safely.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg pair</code>
-                    <p>Manage a lightweight pair-session lifecycle: start, status, and handoff with auditable state.</p>
+                    <p>Guided recovery from common broken git states.</p>
                 </div>
                 <div class="command-item">
                     <code>sg undo</code>
-                    <p>Safely revert commits with planning and confirmation.</p>
+                    <p>List reversible rollbacks with explicit consequences.</p>
                 </div>
                 <div class="command-item">
                     <code>sg wtf</code>
-                    <p>Your panic button. Diagnoses everything wrong and fixes it.</p>
+                    <p>Urgent diagnosis; <code>--learn</code>, <code>--fix-ci</code>.</p>
+                </div>
+            </div>
+
+            <p class="command-group-label">Sync, ship, split</p>
+            <div class="commands-grid">
+                <div class="command-item">
+                    <code>sg sync</code>
+                    <p>Preserve local work while updating from mainline.</p>
+                </div>
+                <div class="command-item">
+                    <code>sg ship</code>
+                    <p>One-command delivery; use <code>sg ship --status</code> for workflow state.</p>
+                </div>
+                <div class="command-item">
+                    <code>sg split</code>
+                    <p>Propose logical commit groups from staged changes.</p>
+                </div>
+            </div>
+
+            <p class="command-group-label">Team, hosting, history</p>
+            <div class="commands-grid">
+                <div class="command-item">
+                    <code>sg who [--file &lt;path&gt;]</code>
+                    <p>Ownership and collaborator context; path may be a file or directory.</p>
+                </div>
+                <div class="command-item">
+                    <code>sg queue --team</code>
+                    <p>Merge queue visibility and risk hints.</p>
+                </div>
+                <div class="command-item">
+                    <code>sg blame --file &lt;path&gt; --line &lt;n&gt; --explain</code>
+                    <p>Line history with rationale (hosted context when available).</p>
+                </div>
+                <div class="command-item">
+                    <code>sg time-travel --to &lt;ref&gt;</code>
+                    <p>Resolve revisions safely, including natural-language references.</p>
+                </div>
+                <div class="command-item">
+                    <code>sg pair --action &lt;start|status|handoff&gt;</code>
+                    <p>Pair sessions; use <code>--session</code> with status and handoff.</p>
+                </div>
+            </div>
+
+            <p class="command-group-label">Diagnostics &amp; AI setup</p>
+            <div class="commands-grid">
+                <div class="command-item">
+                    <code>sg doctor</code>
+                    <p>Deep repository health signals (HEAD, objects, working tree, etc.).</p>
                 </div>
                 <div class="command-item">
                     <code>sg ai-configure</code>
-                    <p>Configure AI provider (OpenAI, Anthropic, Google, Mistral, custom).</p>
+                    <p>Set provider, <code>--credential-ref</code>, optional <code>--url</code> for custom APIs.</p>
+                </div>
+            </div>
+
+            <div class="output-sample" aria-label="Example structured output">
+                <span class="k">Summary:</span> 2 files staged; branch even with origin/main.<br>
+                <span class="k">Risk:</span> low<br>
+                <span class="k">Recommendation:</span> Review diff, then commit or push when ready.<br>
+                <span class="k">Detail:</span> …
+            </div>
+        </section>
+
+        <section id="workflow">
+            <h2>Typical workflow</h2>
+            <p class="section-lead">You can stay entirely in rule-based commands, add AI only where it helps, and use hosted features when <code>gh</code> or remotes are available.</p>
+            <ol class="steps">
+                <li><strong>Orient.</strong> Run <code>sg status</code> after switching branches or pulling.</li>
+                <li><strong>Review.</strong> Use <code>sg explain</code> (with AI) or read diffs; use <code>sg check</code> before a big merge.</li>
+                <li><strong>Commit.</strong> Stage files, run <code>sg commit</code> when you want an AI-assisted message, or commit normally.</li>
+                <li><strong>Publish.</strong> Use <code>sg push</code> or your team’s <code>sg ship</code> flow; follow <code>sg ship --status</code> if delivery is multi-step.</li>
+                <li><strong>When something breaks,</strong> <code>sg wtf</code> first, then <code>sg fix</code> or <code>sg undo</code> as suggested.</li>
+            </ol>
+        </section>
+
+        <section id="install">
+            <h2>Install &amp; requirements</h2>
+            <p class="section-lead">SaneGit is distributed as an npm package and runs on modern Node with git available on your PATH.</p>
+
+            <div class="two-col">
+                <div class="panel">
+                    <h3>Requirements</h3>
+                    <ul>
+                        <li><strong>Node.js 22+</strong> (ESM; see package <code>engines</code>)</li>
+                        <li><strong>Git</strong> (any recent version)</li>
+                        <li>Optional: API credentials for your AI provider</li>
+                        <li>Optional: <a href="https://cli.github.com/">GitHub CLI</a> (<code>gh</code>) for richer hosted context</li>
+                    </ul>
+                </div>
+                <div class="panel">
+                    <h3>From npm</h3>
+                    <div class="code-block" style="margin-top: 8px;">
+                        <span class="code-label">Global CLI</span>
+                        npm install -g sanegit
+                    </div>
+                    <h3 style="margin-top: 16px;">From source</h3>
+                    <div class="code-block">
+                        git clone https://github.com/ntufar/sanegit.git<br>
+                        cd sanegit &amp;&amp; npm install<br>
+                        npm run build &amp;&amp; npm link
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Quick Start Section -->
-        <section id="quickstart">
-            <h2>Quick Start</h2>
+        <section id="configuration">
+            <h2>Configuration</h2>
+            <p class="section-lead">Per-repository settings live under <code>.sanegit/</code>. Treat that directory as local-only and add it to <code>.gitignore</code>.</p>
 
-            <h3>Installation</h3>
-            <div class="code-block">
-                <span class="code-label">$ npm install -g sanegit</span>
-                <span class="command">npm</span> install -g sanegit
+            <div class="two-col">
+                <div class="panel">
+                    <h3>AI providers</h3>
+                    <ul>
+                        <li><code>openai</code>, <code>anthropic</code>, <code>google</code> (Gemini), <code>mistral</code></li>
+                        <li><code>custom</code> with <code>--url</code> pointing at your HTTP API</li>
+                    </ul>
+                </div>
+                <div class="panel">
+                    <h3>Secrets</h3>
+                    <p style="color: #586069; font-size: 0.92em; line-height: 1.55;">API keys are not written into config files. Pass a <strong>credential reference</strong>—typically an environment variable name—via <code>--credential-ref</code> so secrets resolve at runtime.</p>
+                </div>
             </div>
 
-            <h3 style="margin-top: 30px;">Configure AI (optional)</h3>
             <div class="code-block">
-                <span class="code-label">$ sg ai-configure</span>
-                <span class="command">$</span> sg ai-configure
-                <br>Provider? (openai | anthropic | google | mistral | custom): <span class="command">openai</span>
-                <br>API Key or Environment Variable? <span class="command">OPENAI_API_KEY</span>
+                <span class="code-label">Non-interactive example</span>
+                sg ai-configure --provider openai --credential-ref OPENAI_API_KEY
             </div>
 
-            <h3 style="margin-top: 30px;">Use SaneGit</h3>
-            <div class="code-block">
-                <span class="code-label">$ git add src/feature.ts && sg explain</span>
-                <span class="command">$</span> git add src/feature.ts
-                <br><span class="command">$</span> sg explain
-                <br>Summary: New authentication middleware
-                <br>Risk: low
-                <br>Recommendation: Add unit tests for edge cases
-            </div>
-
-            <h3 style="margin-top: 30px;">Commit safely</h3>
-            <div class="code-block">
-                <span class="code-label">$ sg commit</span>
-                <span class="command">$</span> sg commit
-                <br>Proposed: feat: add JWT auth middleware
-                <br>Confirm? (y/n): <span class="command">y</span>
-                <br>[master abc1234] feat: add JWT auth middleware
+            <div class="info-box warn">
+                <h3>AI-required commands</h3>
+                <p><code>sg explain</code> and <code>sg commit</code> need a working provider configuration. Other commands may still run with rules, hosted APIs, or local git data.</p>
             </div>
         </section>
 
-        <!-- Resources Section -->
+        <section id="quickstart">
+            <h2>Quick start</h2>
+            <p class="section-lead">Inside any git repository:</p>
+
+            <h3>Check health</h3>
+            <div class="code-block">
+                <span class="code-label">$ cd my-repo &amp;&amp; sg status</span>
+                sg status
+            </div>
+
+            <h3>Configure AI (optional)</h3>
+            <div class="code-block">
+                <span class="code-label">Interactive</span>
+                sg ai-configure
+                <br><span style="color:#6a737d"># or</span>
+                <br>sg ai-configure --provider openai --credential-ref OPENAI_API_KEY
+            </div>
+
+            <h3>Explain and commit (with AI)</h3>
+            <div class="code-block">
+                git add src/feature.ts<br>
+                sg explain<br>
+                sg commit
+            </div>
+
+            <h3>Ship or push</h3>
+            <div class="code-block">
+                sg push<br>
+                <span style="color:#6a737d"># or a full delivery flow</span><br>
+                sg ship<br>
+                sg ship --status
+            </div>
+        </section>
+
         <section id="resources">
             <h2>Resources</h2>
-            <p style="color: #586069; font-size: 1.05em; line-height: 1.7; margin-bottom: 20px;">Get started with SaneGit by exploring the following resources:</p>
+            <p class="section-lead">Source, detailed guide, and package metadata:</p>
             <div>
-                <a href="https://github.com/ntufar/sanegit" class="cta-button">GitHub Repository</a>
-                <a href="https://github.com/ntufar/sanegit/blob/master/README.md" class="cta-button secondary">Read README</a>
-                <a href="https://github.com/ntufar/sanegit/blob/master/doc/guide.md" class="cta-button secondary">Full Guide</a>
-                <a href="https://www.npmjs.com/package/sanegit" class="cta-button secondary">npm Package</a>
+                <a href="https://github.com/ntufar/sanegit" class="cta-button">GitHub repository</a>
+                <a href="https://github.com/ntufar/sanegit/blob/master/README.md" class="cta-button secondary">README</a>
+                <a href="https://github.com/ntufar/sanegit/blob/master/doc/guide.md" class="cta-button secondary">Full guide</a>
+                <a href="https://github.com/ntufar/sanegit/blob/master/CHANGELOG.md" class="cta-button secondary">Changelog</a>
+                <a href="https://www.npmjs.com/package/sanegit" class="cta-button secondary">npm package</a>
             </div>
 
             <div class="info-box">
-                <h3>Works Offline</h3>
-                <p>Don't have AI configured? No problem. All commands work in degraded mode with rule-based analysis. Configure an AI provider anytime to unlock full capabilities.</p>
+                <h3>Open source</h3>
+                <p>SaneGit is MIT-licensed. Issues and contributions are welcome on GitHub.</p>
             </div>
         </section>
     </div>
