@@ -29,7 +29,7 @@ export async function runShip(cwd: string = process.cwd()): Promise<WorkflowRun>
       cwd,
     );
     if (checkPlan.risk !== "none" && checkPlan.risk !== "low") {
-      const failedRun = await failWorkflowRun(run.id, "Check failed: " + checkPlan.summary, cwd);
+      await failWorkflowRun(run.id, "Check failed: " + checkPlan.summary, cwd);
       throw new Error("Check failed: " + checkPlan.summary);
     }
 
@@ -44,7 +44,7 @@ export async function runShip(cwd: string = process.cwd()): Promise<WorkflowRun>
       cwd,
     );
     if (fixPlan.risk !== "none") {
-      const failedRun = await failWorkflowRun(run.id, "Fix failed: " + fixPlan.summary, cwd);
+      await failWorkflowRun(run.id, "Fix failed: " + fixPlan.summary, cwd);
       throw new Error("Fix failed: " + fixPlan.summary);
     }
 
@@ -61,7 +61,7 @@ export async function runShip(cwd: string = process.cwd()): Promise<WorkflowRun>
         cwd,
       );
       if (pushed.exitCode !== 0) {
-        const failedRun = await failWorkflowRun(run.id, "Push failed", cwd);
+        await failWorkflowRun(run.id, "Push failed", cwd);
         throw new Error("Push failed");
       }
     } else {
@@ -79,7 +79,7 @@ export async function runShip(cwd: string = process.cwd()): Promise<WorkflowRun>
       cwd,
     );
     if (pr.exitCode !== 0) {
-      const failedRun = await failWorkflowRun(run.id, "PR creation failed", cwd);
+      await failWorkflowRun(run.id, "PR creation failed", cwd);
       throw new Error("PR creation failed");
     }
 
@@ -94,7 +94,7 @@ export async function runShip(cwd: string = process.cwd()): Promise<WorkflowRun>
       cwd,
     );
     if (merge.exitCode !== 0) {
-      const failedRun = await failWorkflowRun(run.id, "Merge failed", cwd);
+      await failWorkflowRun(run.id, "Merge failed", cwd);
       throw new Error("Merge failed");
     }
 
