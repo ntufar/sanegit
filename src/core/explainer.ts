@@ -13,7 +13,7 @@ export async function explainChanges(
   cwd: string = process.cwd(),
 ): Promise<ExplainResult> {
   const config = await loadConfig(cwd);
-  const credential = resolveCredential(config);
+  const credential = await resolveCredential(config);
 
   if (!credential.apiKey) {
     return {
@@ -37,7 +37,7 @@ export async function diagnoseCiFailure(
   cwd: string = process.cwd(),
 ): Promise<ExplainResult & { truncated: boolean }> {
   const config = await loadConfig(cwd);
-  const credential = resolveCredential(config);
+  const credential = await resolveCredential(config);
   const diff = await runGit(["diff", "--staged"], cwd);
   const payload = buildAiContextPayload({
     command: "wtf --fix-ci",

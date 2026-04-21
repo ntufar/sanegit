@@ -16,7 +16,7 @@ export async function summarizeHunks(
   if (!diffContent.trim()) return [];
 
   const config = await loadConfig(cwd);
-  const credential = resolveCredential(config);
+  const credential = await resolveCredential(config);
 
   if (!credential.apiKey) {
     throw new Error("Missing API key for AI provider. Please configure it.");

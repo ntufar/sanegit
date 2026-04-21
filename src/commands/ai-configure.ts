@@ -4,6 +4,7 @@ import {
   validateConfig,
   type SaneGitConfig,
 } from "../core/config.js";
+import { setCredential } from "../core/keychain.js";
 import { writeOutput } from "../core/output.js";
 import { logEvent } from "../core/telemetry.js";
 
@@ -11,6 +12,7 @@ export interface AiConfigureInput {
   provider: SaneGitConfig["provider"];
   customBaseUrl?: string;
   credentialRef?: string;
+  apiKey?: string;
   cwd?: string;
 }
 
@@ -19,6 +21,11 @@ export async function runAiConfigure(
 ): Promise<{ ok: boolean; warnings: string[]; errors: string[] }> {
   const cwd = input.cwd ?? process.cwd();
   const existing = await loadConfig(cwd);
+
+  if (input.apiKey && input.credentialRef) {
+    await setCredential(input.credentialRef, input.apiKey);
+  }
+
   const config: SaneGitConfig = {
     provider: input.provider,
     customBaseUrl: input.customBaseUrl,

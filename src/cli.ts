@@ -137,8 +137,8 @@ program
         );
         process.exit(1);
       }
-      // Prompt for API key / env var if not provided via flag
       let credentialRef = options.credentialRef;
+      let apiKey = "";
       if (!credentialRef) {
         const readline2 = await import("readline");
         const rl2 = readline2.createInterface({
@@ -155,13 +155,20 @@ program
           );
         });
         if (answer) {
-          credentialRef = answer;
+          // If the answer looks like a key, use a generic reference and store it
+          if (answer.length > 20) {
+            credentialRef = `SANEGIT_${provider.toUpperCase()}_KEY`;
+            apiKey = answer;
+          } else {
+            credentialRef = answer;
+          }
         }
       }
-      const input = {
+      const input: any = {
         provider,
         ...(options.url ? { customBaseUrl: options.url } : {}),
         ...(credentialRef ? { credentialRef } : {}),
+        ...(apiKey ? { apiKey } : {}),
       };
       await runAiConfigure(input);
     },

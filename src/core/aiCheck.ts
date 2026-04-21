@@ -6,8 +6,7 @@ export async function checkAIConfigured(
   command: string = "this command",
 ): Promise<boolean> {
   const config = await loadConfig(cwd);
-  const credential = resolveCredential(config);
-
+  const credential = await resolveCredential(config);
   if (!credential.apiKey) {
     writeOutput({
       summary: `AI provider not configured for ${command}.`,

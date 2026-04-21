@@ -111,27 +111,31 @@ export function providerToBaseUrl(provider: ProviderId): string | undefined {
   }
 }
 
-export function resolveCredential(
+import { getCredential } from "./keychain.js";
+// ...
+
+export async function resolveCredential(
   config: SaneGitConfig,
   env: NodeJS.ProcessEnv = process.env,
-): { apiKey?: string; source: string } {
+): Promise<{ apiKey?: string; source: string }> {
   if (env.SANEGIT_AI_API_KEY) {
     return { apiKey: env.SANEGIT_AI_API_KEY, source: "env:SANEGIT_AI_API_KEY" };
   }
 
   if (config.credentialRef) {
-    // If credentialRef looks like an env var name (ALL_CAPS / underscores), resolve it from env.
-    // Otherwise treat it as a literal API key stored directly in config.
+    const apiKey = await getCredential(config.credentialRef);
+    if (apiKey) {
+      return { apiKey, source: "keychain" };
+    }
+    
+    // Fallback for env var referenced in credentialRef
     const isEnvVar = /^[A-Z][A-Z0-9_]*$/.test(config.credentialRef);
     if (isEnvVar) {
       const apiKey = env[config.credentialRef];
       if (apiKey) {
         return { apiKey, source: `env:${config.credentialRef}` };
       }
-      return { source: `env:${config.credentialRef} (not set)` };
     }
-    // Literal key stored in credentialRef (not recommended for production, but works for local dev)
-    return { apiKey: config.credentialRef, source: "config:credentialRef" };
   }
 
   return { source: "none" };

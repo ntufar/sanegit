@@ -19,7 +19,7 @@ export async function buildCommitPlan(
   const summary = files.length > 0 ? files.join(", ") : "no staged files";
 
   const config = await loadConfig(cwd);
-  const credential = resolveCredential(config);
+  const credential = await resolveCredential(config);
 
   if (!credential.apiKey) {
     return {
