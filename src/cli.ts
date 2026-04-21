@@ -89,7 +89,7 @@ program
 program
   .command("ai-configure")
   .description("Configure AI provider, endpoint, and credential reference")
-  .requiredOption(
+  .option(
     "--provider <provider>",
     "Provider: openai|anthropic|google|mistral|custom",
   )
@@ -97,12 +97,48 @@ program
   .option("--credential-ref <ref>", "Keychain credential reference")
   .action(
     async (options: {
-      provider: "openai" | "anthropic" | "google" | "mistral" | "custom";
+      provider?: "openai" | "anthropic" | "google" | "mistral" | "custom";
       url?: string;
       credentialRef?: string;
     }) => {
+      let provider = options.provider;
+      if (!provider) {
+        const readline = await import("readline");
+        const rl = readline.createInterface({
+          input: process.stdin,
+          output: process.stdout,
+        });
+        provider = await new Promise<
+          "openai" | "anthropic" | "google" | "mistral" | "custom"
+        >((resolve) => {
+          rl.question(
+            "Provider? (openai | anthropic | google | mistral | custom): ",
+            (answer) => {
+              rl.close();
+              resolve(
+                answer.trim() as
+                  | "openai"
+                  | "anthropic"
+                  | "google"
+                  | "mistral"
+                  | "custom",
+              );
+            },
+          );
+        });
+      }
+      if (
+        !["openai", "anthropic", "google", "mistral", "custom"].includes(
+          provider,
+        )
+      ) {
+        console.error(
+          `Invalid provider "${provider}". Choose one of: openai, anthropic, google, mistral, custom`,
+        );
+        process.exit(1);
+      }
       const input = {
-        provider: options.provider,
+        provider,
         ...(options.url ? { customBaseUrl: options.url } : {}),
         ...(options.credentialRef
           ? { credentialRef: options.credentialRef }
