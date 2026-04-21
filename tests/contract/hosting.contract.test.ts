@@ -6,6 +6,8 @@ describe("hosting contract", () => {
     const context = emptyHostedContext("unknown");
     expect(context.provider).toBe("unknown");
     expect(typeof context.remoteAvailable).toBe("boolean");
+    expect(Array.isArray(context.recentPullRequestAuthors)).toBe(true);
+    expect(typeof context.repository).toBe("object");
     expect(context.ci.status).toBeTruthy();
   });
 });

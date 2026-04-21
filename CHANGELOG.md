@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-04-21
+
+### Added
+- `sg who` now shows richer hosted context including repository name, default branch, and recent PR authors when available
+
+### Fixed
+- `sg ai-configure` now supports interactive provider selection and credential entry when flags are omitted
+- AI provider integration now performs real provider HTTP requests instead of always falling back to deterministic output
+- GitHub hosted context queries now use `gh` CLI fields compatible with current GitHub CLI releases
+
 ## [0.2.0] - 2026-04-21
 
 ### Added
@@ -134,6 +144,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Added `repository.url` to `package.json` to satisfy npm provenance validation
 
+[0.2.1]: https://github.com/ntufar/sanegit/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/ntufar/sanegit/compare/v0.1.14...v0.2.0
 [0.1.14]: https://github.com/ntufar/sanegit/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/ntufar/sanegit/compare/v0.1.12...v0.1.13

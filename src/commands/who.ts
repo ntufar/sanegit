@@ -6,9 +6,18 @@ export async function runWho(cwd: string = process.cwd()): Promise<void> {
   const detail = [
     `Provider: ${hosted.provider}`,
     `Remote available: ${hosted.remoteAvailable}`,
+    hosted.repository.nameWithOwner
+      ? `Repository: ${hosted.repository.nameWithOwner}`
+      : "Repository: unavailable",
+    hosted.repository.defaultBranch
+      ? `Default branch: ${hosted.repository.defaultBranch}`
+      : "Default branch: unavailable",
     hosted.pullRequest.title
       ? `Current PR: #${hosted.pullRequest.number ?? "?"} ${hosted.pullRequest.title}`
       : "Current PR: unavailable",
+    hosted.recentPullRequestAuthors.length > 0
+      ? `Recent PR authors: ${hosted.recentPullRequestAuthors.join(", ")}`
+      : "Recent PR authors: unavailable",
   ];
 
   writeOutput({

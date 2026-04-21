@@ -18,10 +18,17 @@ export interface MergeQueueState {
   summary: string;
 }
 
+export interface RepositoryState {
+  nameWithOwner?: string;
+  defaultBranch?: string;
+}
+
 export interface HostedContextSnapshot {
   provider: HostingProviderId;
   remoteAvailable: boolean;
+  repository: RepositoryState;
   pullRequest: PullRequestState;
+  recentPullRequestAuthors: string[];
   ci: CiState;
   mergeQueue: MergeQueueState;
 }
@@ -37,7 +44,9 @@ export function emptyHostedContext(
   return {
     provider,
     remoteAvailable: false,
+    repository: {},
     pullRequest: { status: "unknown" },
+    recentPullRequestAuthors: [],
     ci: { status: "unknown", summary: "CI status unavailable" },
     mergeQueue: {
       supported: false,

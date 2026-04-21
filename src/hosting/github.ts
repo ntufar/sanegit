@@ -17,22 +17,73 @@ export class GitHubHostedProvider implements HostedProvider {
     try {
       const { stdout } = await execFileAsync(
         "gh",
-        ["pr", "status", "--json", "currentBranch"],
+        ["repo", "view", "--json", "nameWithOwner,defaultBranchRef"],
         { cwd },
       );
       const parsed = JSON.parse(stdout) as {
-        currentBranch?: { number?: number; title?: string; url?: string };
+        nameWithOwner?: string;
+        defaultBranchRef?: { name?: string };
       };
-      const branch = parsed.currentBranch;
       fallback.remoteAvailable = true;
-      fallback.pullRequest = {
-        ...(branch?.number !== undefined ? { number: branch.number } : {}),
-        ...(branch?.title !== undefined ? { title: branch.title } : {}),
-        status: branch ? "open" : "unknown",
-        ...(branch?.url !== undefined ? { url: branch.url } : {}),
+      fallback.repository = {
+        ...(parsed.nameWithOwner
+          ? { nameWithOwner: parsed.nameWithOwner }
+          : {}),
+        ...(parsed.defaultBranchRef?.name
+          ? { defaultBranch: parsed.defaultBranchRef.name }
+          : {}),
       };
     } catch {
-      // Keep fallback values when gh is not available or unauthenticated.
+      // Keep fallback values when gh cannot access the repository.
+    }
+
+    try {
+      const { stdout } = await execFileAsync(
+        "gh",
+        ["pr", "view", "--json", "number,title,url,state"],
+        { cwd },
+      );
+      const parsed = JSON.parse(stdout) as {
+        number?: number;
+        title?: string;
+        url?: string;
+        state?: string;
+      };
+      fallback.pullRequest = {
+        ...(parsed.number !== undefined ? { number: parsed.number } : {}),
+        ...(parsed.title !== undefined ? { title: parsed.title } : {}),
+        status:
+          parsed.state === "OPEN"
+            ? "open"
+            : parsed.state === "MERGED"
+              ? "merged"
+              : parsed.state === "CLOSED"
+                ? "closed"
+                : "unknown",
+        ...(parsed.url !== undefined ? { url: parsed.url } : {}),
+      };
+    } catch {
+      // Keep fallback PR values when no PR exists for the current branch.
+    }
+
+    try {
+      const { stdout } = await execFileAsync(
+        "gh",
+        ["pr", "list", "--limit", "5", "--json", "author"],
+        { cwd },
+      );
+      const parsed = JSON.parse(stdout) as Array<{
+        author?: { login?: string };
+      }>;
+      fallback.recentPullRequestAuthors = Array.from(
+        new Set(
+          parsed
+            .map((pr) => pr.author?.login)
+            .filter((author): author is string => Boolean(author)),
+        ),
+      );
+    } catch {
+      // Keep fallback author list when recent PRs cannot be queried.
     }
 
     try {
