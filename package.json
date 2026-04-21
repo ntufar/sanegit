@@ -1,6 +1,6 @@
 {
   "name": "sanegit",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "SaneGit Command Assistant CLI",
   "repository": {
     "type": "git",
@@ -25,7 +25,10 @@
     "test:watch": "vitest",
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
-    "test:contract": "vitest run tests/contract"
+    "test:contract": "vitest run tests/contract",
+    "test:hosting": "vitest run tests/contract/hosting.contract.test.ts tests/unit/hostingProvider.test.ts",
+    "test:workflow": "vitest run tests/unit/workflowState.test.ts tests/integration/ship.integration.test.ts",
+    "test:wtf-learning": "vitest run tests/unit/patternLearner.test.ts tests/integration/wtf.integration.test.ts"
   },
   "engines": {
     "node": ">=22"
