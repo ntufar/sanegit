@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { runShip } from "../../src/commands/ship.js";
-import { runGit } from "../../src/core/git.js";
 import * as resolver from "../../src/core/resolver.js";
 import * as git from "../../src/core/git.js";
 import { createRepoHarness } from "../helpers/repoHarness.js";
@@ -25,10 +24,14 @@ describe("ship integration", () => {
   });
 
   it("should run full delivery pipeline successfully", async () => {
-    vi.mocked(git.getRemoteUrl).mockResolvedValue("git@github.com:user/repo.git");
+    vi.mocked(git.getRemoteUrl).mockResolvedValue(
+      "git@github.com:user/repo.git",
+    );
     vi.mocked(git.runGit).mockImplementation(async (args) => {
-      if (args[0] === "push") return { exitCode: 0, stdout: "pushed", stderr: "" };
-      if (args[0] === "gh") return { exitCode: 0, stdout: "success", stderr: "" };
+      if (args[0] === "push")
+        return { exitCode: 0, stdout: "pushed", stderr: "" };
+      if (args[0] === "gh")
+        return { exitCode: 0, stdout: "success", stderr: "" };
       return { exitCode: 0, stdout: "", stderr: "" };
     });
 
@@ -43,7 +46,13 @@ describe("ship integration", () => {
 
     const run = await runShip(cwd);
     expect(run.status).toBe("completed");
-    expect(run.steps.map((s) => s.name)).toEqual(["check", "fix", "push", "pr", "merge"]);
+    expect(run.steps.map((s) => s.name)).toEqual([
+      "check",
+      "fix",
+      "push",
+      "pr",
+      "merge",
+    ]);
     expect(run.steps.every((s) => s.status === "completed")).toBe(true);
   });
 
@@ -54,12 +63,14 @@ describe("ship integration", () => {
     });
 
     await expect(runShip(cwd)).rejects.toThrow();
-    
+
     // Check status via workflow journal
     const journalPath = path.join(cwd, ".sanegit", "workflow-journal.json");
     const journal = JSON.parse(await fs.readFile(journalPath, "utf8"));
     const run = Object.values(journal.runs)[0] as any;
     expect(run.status).toBe("failed");
-    expect(run.steps.find((s: any) => s.name === "check")?.status).toBe("failed");
+    expect(run.steps.find((s: any) => s.name === "check")?.status).toBe(
+      "failed",
+    );
   });
 });
