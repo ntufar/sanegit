@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.2] - 2026-04-21
+
+### Added
+- `sg who --file <path>` now supports both files and directories, with directory ownership aggregated across tracked files using blame-derived line ownership
+- New local ownership parsing helpers and dedicated unit/integration coverage for repository, file, and directory ownership scopes
+- New blame integration coverage validating parsed author and rationale output on real repository history
+
+### Changed
+- `sg who` now computes local ownership from git history by default and enriches collaborator signals with recent local activity even when hosted context is unavailable
+- `sg time-travel` now resolves natural-language references (for example: "last commit", "yesterday", and "N commits ago") with explicit mapping details in output
+- `sg doctor` now emits prioritized findings from richer repository health signals (detached HEAD, commit availability, object pressure, and working tree volume)
+- `sg blame --explain` now parses porcelain blame metadata and synthesizes human-readable rationale from commit intent
+
+### Fixed
+- Ownership path-scope detection in `sg who --file` now correctly distinguishes exact file targets from directory targets to avoid misclassification
+
 ## [0.2.1] - 2026-04-21
 
 ### Added
@@ -144,6 +160,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Added `repository.url` to `package.json` to satisfy npm provenance validation
 
+[0.2.2]: https://github.com/ntufar/sanegit/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/ntufar/sanegit/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/ntufar/sanegit/compare/v0.1.14...v0.2.0
 [0.1.14]: https://github.com/ntufar/sanegit/compare/v0.1.13...v0.1.14

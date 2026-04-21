@@ -1,12 +1,19 @@
 import { mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
+import { mkdir, writeFile } from "node:fs/promises";
 import { runGit } from "../../src/core/git.js";
 
 export async function createRepoHarness(): Promise<{
   cwd: string;
   commitFile: (path: string, content: string, message: string) => Promise<void>;
+  commitFileAsAuthor: (
+    path: string,
+    content: string,
+    message: string,
+    authorName: string,
+    authorEmail: string,
+  ) => Promise<void>;
   createBranch: (name: string) => Promise<void>;
   cleanup: () => Promise<void>;
 }> {
@@ -21,9 +28,37 @@ export async function createRepoHarness(): Promise<{
     message: string,
   ): Promise<void> => {
     const filePath = join(cwd, path);
+    await mkdir(dirname(filePath), { recursive: true });
     await writeFile(filePath, content, "utf8");
     await runGit(["add", path], cwd);
     await runGit(["commit", "-m", message], cwd);
+  };
+
+  const commitFileAsAuthor = async (
+    path: string,
+    content: string,
+    message: string,
+    authorName: string,
+    authorEmail: string,
+  ): Promise<void> => {
+    const filePath = join(cwd, path);
+    await mkdir(dirname(filePath), { recursive: true });
+    await writeFile(filePath, content, "utf8");
+    await runGit(["add", path], cwd);
+    await runGit(
+      [
+        "-c",
+        `user.name=${authorName}`,
+        "-c",
+        `user.email=${authorEmail}`,
+        "commit",
+        "--author",
+        `${authorName} <${authorEmail}>`,
+        "-m",
+        message,
+      ],
+      cwd,
+    );
   };
 
   const createBranch = async (name: string): Promise<void> => {
@@ -33,6 +68,7 @@ export async function createRepoHarness(): Promise<{
   return {
     cwd,
     commitFile,
+    commitFileAsAuthor,
     createBranch,
     cleanup: async () => {
       // Temp dir cleanup is delegated to OS test temp retention.

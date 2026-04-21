@@ -2,11 +2,59 @@ import { promisify } from "node:util";
 import { execFile } from "node:child_process";
 import {
   emptyHostedContext,
+  type MergeQueueState,
   type HostedContextSnapshot,
   type HostedProvider,
 } from "./provider.js";
 
 const execFileAsync = promisify(execFile);
+
+interface GitHubQueuePullRequest {
+  number?: number;
+  headRefName?: string;
+  isDraft?: boolean;
+  mergeStateStatus?: string;
+}
+
+export function deriveMergeQueueState(
+  pullRequests: GitHubQueuePullRequest[],
+  currentBranch: string,
+  ciStatus: HostedContextSnapshot["ci"]["status"],
+): MergeQueueState {
+  if (pullRequests.length === 0) {
+    return {
+      supported: true,
+      risky: ciStatus === "failure",
+      summary: "No open pull requests in queue.",
+    };
+  }
+
+  const normalizedBranch = currentBranch.trim();
+  const currentIndex = pullRequests.findIndex(
+    (pr) => pr.headRefName?.trim() === normalizedBranch,
+  );
+  const currentPr = currentIndex >= 0 ? pullRequests[currentIndex] : undefined;
+  const queueLength = pullRequests.length;
+  const hasDirtyMergeState =
+    currentPr?.mergeStateStatus === "DIRTY" ||
+    currentPr?.mergeStateStatus === "BEHIND" ||
+    currentPr?.mergeStateStatus === "BLOCKED";
+  const hasLargeQueue = queueLength >= 8;
+  const risky = ciStatus === "failure" || hasDirtyMergeState || hasLargeQueue;
+
+  const queueSummary =
+    currentIndex >= 0
+      ? `Open PR queue: ${queueLength}; current branch PR #${currentPr?.number ?? "?"} is position ${currentIndex + 1}.`
+      : `Open PR queue: ${queueLength}; current branch is not associated with an open PR.`;
+
+  return {
+    supported: true,
+    risky,
+    summary: risky
+      ? `${queueSummary} Elevated merge risk detected.`
+      : `${queueSummary} Queue looks healthy.`,
+  };
+}
 
 export class GitHubHostedProvider implements HostedProvider {
   public readonly id = "github" as const;
@@ -112,6 +160,35 @@ export class GitHubHostedProvider implements HostedProvider {
       }
     } catch {
       // Keep fallback values when CI state cannot be queried.
+    }
+
+    try {
+      const [branchResult, queueResult] = await Promise.all([
+        execFileAsync("git", ["rev-parse", "--abbrev-ref", "HEAD"], { cwd }),
+        execFileAsync(
+          "gh",
+          [
+            "pr",
+            "list",
+            "--state",
+            "open",
+            "--limit",
+            "30",
+            "--json",
+            "number,headRefName,isDraft,mergeStateStatus",
+          ],
+          { cwd },
+        ),
+      ]);
+      const currentBranch = branchResult.stdout.trim();
+      const pullRequests = JSON.parse(queueResult.stdout) as GitHubQueuePullRequest[];
+      fallback.mergeQueue = deriveMergeQueueState(
+        pullRequests.filter((pr) => pr.isDraft !== true),
+        currentBranch,
+        fallback.ci.status,
+      );
+    } catch {
+      // Keep fallback queue values when queue details cannot be queried.
     }
 
     return fallback;

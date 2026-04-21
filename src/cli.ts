@@ -196,8 +196,13 @@ program
 program
   .command("who")
   .description("Show collaborator and ownership context")
-  .action(async () => {
-    await runWho();
+  .option("--file <file>", "Show ownership context for a specific file")
+  .action(async (options: { file?: string }) => {
+    await runWho(
+      process.cwd(),
+      undefined,
+      options.file ? { file: options.file } : {},
+    );
   });
 
 program

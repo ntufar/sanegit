@@ -12,7 +12,12 @@ describe("recovery contract", () => {
   });
 
   it("supports advanced recovery command surfaces", async () => {
-    await runTimeTravel("HEAD", process.cwd());
-    expect(true).toBe(true);
+    const chunks: string[] = [];
+    await runTimeTravel("definitely-not-a-valid-ref", process.cwd(), (text) => {
+      chunks.push(text);
+    });
+    expect(chunks.join("")).toContain(
+      "Unable to resolve requested historical reference.",
+    );
   });
 });
