@@ -68,15 +68,75 @@ describe("ship integration", () => {
       detail: ["Conflicted: file.ts"],
     });
 
-    await expect(runShip(cwd)).rejects.toThrow();
+    let errorThrown = false;
+    try {
+      await runShip(cwd);
+    } catch (error) {
+      errorThrown = true;
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).toContain("Check failed");
+    }
+    expect(errorThrown).toBe(true);
 
     // Check status via workflow journal
-    const journalPath = path.join(cwd, ".sanegit", "workflow-journal.json");
+    const journalPath = path.join(cwd, ".sanegit", "workflows.json");
     const journal = JSON.parse(await fs.readFile(journalPath, "utf8"));
-    const run = Object.values(journal.runs)[0] as any;
+    const runs = Object.values(journal.runs) as any[];
+    // Get the most recent run
+    const run = runs
+      .filter((r: any) => r.command === "ship")
+      .sort((a: any, b: any) => Date.parse(b.startedAt) - Date.parse(a.startedAt))[0];
+    expect(run).toBeDefined();
     expect(run.status).toBe("failed");
     expect(run.steps.find((s: any) => s.name === "check")?.status).toBe(
       "failed",
     );
+  });
+
+  it("emits workflow checkpoint updates within cadence budget", async () => {
+    vi.mocked(git.getRemoteUrl).mockResolvedValue(
+      "git@github.com:user/repo.git",
+    );
+    vi.mocked(git.runGit).mockImplementation(async (args) => {
+      if (args[0] === "push")
+        return { exitCode: 0, stdout: "pushed", stderr: "" };
+      if (args[0] === "gh")
+        return { exitCode: 0, stdout: "success", stderr: "" };
+      return { exitCode: 0, stdout: "", stderr: "" };
+    });
+
+    vi.spyOn(resolver, "buildCheckPlan").mockResolvedValue({
+      risk: "none",
+      summary: "all good",
+      recommendation: "proceed with ship",
+      detail: [],
+    });
+    vi.spyOn(resolver, "buildFixPlan").mockResolvedValue({
+      risk: "none",
+      summary: "no fixes needed",
+      recommendation: "proceed with ship",
+      detail: [],
+    });
+
+    await runShip(cwd);
+
+    const journalPath = path.join(cwd, ".sanegit", "workflows.json");
+    const journal = JSON.parse(await fs.readFile(journalPath, "utf8"));
+    const run = Object.values(journal.runs).find(
+      (entry: any) => entry.command === "ship",
+    );
+    expect(run).toBeDefined();
+    if (!run) {
+      return;
+    }
+    for (let index = 1; index < (run as any).steps.length; index += 1) {
+      const prev = Date.parse(
+        (run as any).steps[index - 1]?.at ?? (run as any).startedAt,
+      );
+      const current = Date.parse(
+        (run as any).steps[index]?.at ?? (run as any).updatedAt,
+      );
+      expect(current - prev).toBeLessThanOrEqual(10_000);
+    }
   });
 });

@@ -29,8 +29,8 @@ export async function runShip(cwd: string = process.cwd()): Promise<WorkflowRun>
       cwd,
     );
     if (checkPlan.risk !== "none" && checkPlan.risk !== "low") {
-      await failWorkflowRun(run.id, "Check failed: " + checkPlan.summary, cwd);
-      return run;
+      const failedRun = await failWorkflowRun(run.id, "Check failed: " + checkPlan.summary, cwd);
+      throw new Error("Check failed: " + checkPlan.summary);
     }
 
     // 2. Fix
@@ -44,8 +44,8 @@ export async function runShip(cwd: string = process.cwd()): Promise<WorkflowRun>
       cwd,
     );
     if (fixPlan.risk !== "none") {
-      await failWorkflowRun(run.id, "Fix failed: " + fixPlan.summary, cwd);
-      return run;
+      const failedRun = await failWorkflowRun(run.id, "Fix failed: " + fixPlan.summary, cwd);
+      throw new Error("Fix failed: " + fixPlan.summary);
     }
 
     // 3. Push
@@ -61,8 +61,8 @@ export async function runShip(cwd: string = process.cwd()): Promise<WorkflowRun>
         cwd,
       );
       if (pushed.exitCode !== 0) {
-        await failWorkflowRun(run.id, "Push failed", cwd);
-        return run;
+        const failedRun = await failWorkflowRun(run.id, "Push failed", cwd);
+        throw new Error("Push failed");
       }
     } else {
       await checkpointWorkflowRun(run.id, "push", "completed", "No remote configured", cwd);
@@ -79,8 +79,8 @@ export async function runShip(cwd: string = process.cwd()): Promise<WorkflowRun>
       cwd,
     );
     if (pr.exitCode !== 0) {
-      await failWorkflowRun(run.id, "PR creation failed", cwd);
-      return run;
+      const failedRun = await failWorkflowRun(run.id, "PR creation failed", cwd);
+      throw new Error("PR creation failed");
     }
 
     // 5. Merge (using gh CLI)
@@ -94,18 +94,18 @@ export async function runShip(cwd: string = process.cwd()): Promise<WorkflowRun>
       cwd,
     );
     if (merge.exitCode !== 0) {
-      await failWorkflowRun(run.id, "Merge failed", cwd);
-      return run;
+      const failedRun = await failWorkflowRun(run.id, "Merge failed", cwd);
+      throw new Error("Merge failed");
     }
 
-    await completeWorkflowRun(run.id, cwd);
+    const completedRun = await completeWorkflowRun(run.id, cwd);
     writeOutput({
       summary: "Ship workflow completed successfully.",
       risk: "none",
       recommendation: "Monitor the pull request and verify completion.",
     });
 
-    return run;
+    return completedRun!;
   } catch (error) {
     await failWorkflowRun(run.id, error instanceof Error ? error.message : String(error), cwd);
     throw error;
