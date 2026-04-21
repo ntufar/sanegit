@@ -99,7 +99,11 @@ export async function runShip(cwd: string = process.cwd()): Promise<WorkflowRun>
     }
 
     await completeWorkflowRun(run.id, cwd);
-    writeOutput({ summary: "Ship workflow completed successfully." });
+    writeOutput({
+      summary: "Ship workflow completed successfully.",
+      risk: "none",
+      recommendation: "Monitor the pull request and verify completion.",
+    });
 
     return run;
   } catch (error) {

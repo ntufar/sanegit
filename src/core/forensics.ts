@@ -1,4 +1,4 @@
-import { runGit } from "./git";
+import { runGit } from "./git.js";
 
 /**
  * Conflict Forensics
@@ -39,7 +39,9 @@ export async function getBlameForLine(
   if (result.exitCode !== 0) return null;
 
   const lines = result.stdout.split("\n");
-  const commitHash = lines[0].split(" ")[0];
+  const firstLine = lines[0];
+  if (!firstLine) return null;
+  const commitHash = firstLine.split(" ")[0] ?? "";
   let author = "";
   let summary = "";
 

@@ -18,6 +18,10 @@ export async function summarizeHunks(
   const config = await loadConfig(cwd);
   const credential = resolveCredential(config);
 
+  if (!credential.apiKey) {
+    throw new Error("Missing API key for AI provider. Please configure it.");
+  }
+
   const baseUrl = config.customBaseUrl ?? providerToBaseUrl(config.provider);
   const provider = createProvider({
     provider: config.provider,

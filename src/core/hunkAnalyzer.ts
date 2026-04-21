@@ -1,4 +1,4 @@
-import { runGit } from "./git";
+import { runGit } from "./git.js";
 
 export interface Hunk {
   header: string;
@@ -23,7 +23,7 @@ export function parseDiffOutput(diff: string): Hunk[] {
   for (const line of lines) {
     if (line.startsWith("@@")) {
       const match = line.match(/^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@/);
-      if (match) {
+      if (match && match[2] !== undefined) {
         currentHunk = {
           header: line,
           lines: [],
