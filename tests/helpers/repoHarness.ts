@@ -22,7 +22,7 @@ export async function createRepoHarness(options: RepoHarnessOptions = {}): Promi
   cleanup: () => Promise<void>;
 }> {
   const cwd = await mkdtemp(join(tmpdir(), "sanegit-test-"));
-  await runGit(["init"], cwd);
+  await runGit(["init", "--initial-branch=main"], cwd);
   await runGit(["config", "user.email", "test@example.com"], cwd);
   await runGit(["config", "user.name", "SaneGit Test"], cwd);
 
