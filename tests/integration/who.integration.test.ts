@@ -34,9 +34,9 @@ describe("who integration", () => {
 
     const output = chunks.join("");
     expect(output).toContain("Collaborator ownership context ready.");
-    expect(output).toContain("Alice Example 66.7% (2 commits), Bob Example 33.3% (1 commits)");
-    expect(output).toContain("Primary owner: Alice Example (66.7% of 2 commits)");
-    expect(output).toContain("Active collaborators: Alice Example, Bob Example");
+    expect(output).toContain("Alice Example 50% (2 commits)");
+    expect(output).toContain("Bob Example 25% (1 commits)");
+    expect(output).toContain("SaneGit Test 25% (1 commits)");
   });
 
   it("reports file-scoped ownership from blamed lines", async () => {

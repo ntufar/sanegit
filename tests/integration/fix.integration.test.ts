@@ -4,7 +4,7 @@ import { buildFixPlan } from "../../src/core/resolver.js";
 
 describe("fix integration", () => {
   it("returns fix recommendations", async () => {
-    const harness = await createRepoHarness();
+    const harness = await createRepoHarness({ withRemote: true });
     const plan = await buildFixPlan(harness.cwd);
     expect(plan.summary.length).toBeGreaterThan(0);
   });

@@ -8,6 +8,7 @@ import {
   buildBlameRationale,
   parseBlamePorcelain,
 } from "../../src/commands/blame.js";
+import { createRepoHarness } from "../helpers/repoHarness.js";
 
 describe("core services", () => {
   it("redacts API key-like tokens", () => {
@@ -21,12 +22,14 @@ describe("core services", () => {
   });
 
   it("returns predictor result shape", async () => {
-    const result = await predictPushRisk(process.cwd());
+    const harness = await createRepoHarness();
+    const result = await predictPushRisk(harness.cwd);
     expect(Array.isArray(result.reasons)).toBe(true);
   });
 
   it("returns repository snapshot shape for doctor command", async () => {
-    const snapshot = await getRepositorySnapshot(process.cwd());
+    const harness = await createRepoHarness();
+    const snapshot = await getRepositorySnapshot(harness.cwd);
     expect(snapshot.branch.length).toBeGreaterThan(0);
   });
 

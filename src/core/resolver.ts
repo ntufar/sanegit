@@ -42,6 +42,7 @@ export async function buildFixPlan(
   const mergeState = await runGit(
     ["rev-parse", "-q", "--verify", "MERGE_HEAD"],
     cwd,
+    { throw: false },
   );
   if (mergeState.exitCode === 0) {
     return {

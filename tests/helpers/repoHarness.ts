@@ -4,7 +4,11 @@ import { dirname, join } from "node:path";
 import { mkdir, writeFile } from "node:fs/promises";
 import { runGit } from "../../src/core/git.js";
 
-export async function createRepoHarness(): Promise<{
+export interface RepoHarnessOptions {
+  withRemote?: boolean;
+}
+
+export async function createRepoHarness(options: RepoHarnessOptions = {}): Promise<{
   cwd: string;
   commitFile: (path: string, content: string, message: string) => Promise<void>;
   commitFileAsAuthor: (
@@ -21,6 +25,17 @@ export async function createRepoHarness(): Promise<{
   await runGit(["init"], cwd);
   await runGit(["config", "user.email", "test@example.com"], cwd);
   await runGit(["config", "user.name", "SaneGit Test"], cwd);
+
+  if (options.withRemote !== false) {
+    await writeFile(join(cwd, ".gitkeep"), "", "utf8");
+    await runGit(["add", ".gitkeep"], cwd);
+    await runGit(["commit", "-m", "initial"], cwd);
+
+    const bareDir = await mkdtemp(join(tmpdir(), "sanegit-remote-"));
+    await runGit(["init", "--bare"], bareDir);
+    await runGit(["remote", "add", "origin", bareDir], cwd);
+    await runGit(["push", "-u", "origin", "main"], cwd);
+  }
 
   const commitFile = async (
     path: string,

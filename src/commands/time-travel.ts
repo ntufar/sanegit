@@ -70,7 +70,7 @@ export async function runTimeTravel(
   writer: (text: string) => void = process.stdout.write.bind(process.stdout),
 ): Promise<void> {
   const resolved = resolveTimeTravelReference(reference);
-  const rev = await runGit(["rev-parse", "--verify", resolved.gitReference], cwd);
+  const rev = await runGit(["rev-parse", "--verify", resolved.gitReference], cwd, { throw: false });
   if (rev.exitCode !== 0) {
     writeOutput({
       summary: "Unable to resolve requested historical reference.",
