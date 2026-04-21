@@ -1,44 +1,65 @@
-import { describe, expect, it } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { runShip } from "../../src/commands/ship.js";
+import { runGit } from "../../src/core/git.js";
+import * as resolver from "../../src/core/resolver.js";
+import * as git from "../../src/core/git.js";
 import { createRepoHarness } from "../helpers/repoHarness.js";
-import { runShip, runShipStatus } from "../../src/commands/ship.js";
-import { saveConfig } from "../../src/core/config.js";
+import fs from "fs/promises";
+import path from "path";
+
+vi.mock("../../src/core/git.js", async () => {
+  const actual = await vi.importActual("../../src/core/git.js");
+  return {
+    ...actual,
+    runGit: vi.fn(),
+    getRemoteUrl: vi.fn(),
+  };
+});
 
 describe("ship integration", () => {
-  it("creates a ship workflow run and exposes status", async () => {
+  let cwd: string;
+
+  beforeEach(async () => {
     const harness = await createRepoHarness();
-    await harness.commitFile("README.md", "ship\n", "chore: prepare ship");
-
-    const run = await runShip(harness.cwd);
-    const status = await runShipStatus(harness.cwd);
-
-    expect(run.id.length).toBeGreaterThan(0);
-    expect(status?.id).toBe(run.id);
+    cwd = harness.cwd;
   });
 
-  it("keeps high-risk ship automation gated when disabled", async () => {
-    const harness = await createRepoHarness();
-    await saveConfig(
-      {
-        provider: "openai",
-        commandDefaults: {
-          confirmDestructiveLocalActions: true,
-          autoRunRemoteSafeSteps: true,
-          enableHighRiskShipAutomation: false,
-          enableFixCiAutomation: false,
-        },
-        aiContext: {
-          includeFullDiff: true,
-          includeReferencedFiles: true,
-          showUsageMarker: true,
-          sensitivePathGlobs: ["**/.env*"],
-          maxPayloadBytes: 200000,
-        },
-        hosting: { providerMode: "auto", allowLocalFallback: true },
-      },
-      harness.cwd,
-    );
+  it("should run full delivery pipeline successfully", async () => {
+    vi.mocked(git.getRemoteUrl).mockResolvedValue("git@github.com:user/repo.git");
+    vi.mocked(git.runGit).mockImplementation(async (args) => {
+      if (args[0] === "push") return { exitCode: 0, stdout: "pushed", stderr: "" };
+      if (args[0] === "gh") return { exitCode: 0, stdout: "success", stderr: "" };
+      return { exitCode: 0, stdout: "", stderr: "" };
+    });
 
-    const run = await runShip(harness.cwd);
-    expect(run.id.length).toBeGreaterThan(0);
+    vi.spyOn(resolver, "buildCheckPlan").mockResolvedValue({
+      risk: "none",
+      summary: "all good",
+    });
+    vi.spyOn(resolver, "buildFixPlan").mockResolvedValue({
+      risk: "none",
+      summary: "no fixes needed",
+    });
+
+    const run = await runShip(cwd);
+    expect(run.status).toBe("completed");
+    expect(run.steps.map((s) => s.name)).toEqual(["check", "fix", "push", "pr", "merge"]);
+    expect(run.steps.every((s) => s.status === "completed")).toBe(true);
+  });
+
+  it("should fail when check step fails", async () => {
+    vi.spyOn(resolver, "buildCheckPlan").mockResolvedValue({
+      risk: "high",
+      summary: "conflict detected",
+    });
+
+    await expect(runShip(cwd)).rejects.toThrow();
+    
+    // Check status via workflow journal
+    const journalPath = path.join(cwd, ".sanegit", "workflow-journal.json");
+    const journal = JSON.parse(await fs.readFile(journalPath, "utf8"));
+    const run = Object.values(journal.runs)[0] as any;
+    expect(run.status).toBe("failed");
+    expect(run.steps.find((s: any) => s.name === "check")?.status).toBe("failed");
   });
 });
