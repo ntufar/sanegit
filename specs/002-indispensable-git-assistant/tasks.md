@@ -11,10 +11,10 @@
 
 **Purpose**: Align the package, folders, and shared test scaffolding with the implementation plan.
 
-- [ ] T001 Update package metadata and scripts for hosted integrations and new command coverage in package.json
-- [ ] T002 [P] Create hosting adapter scaffolding in src/hosting/provider.ts, src/hosting/index.ts, and src/hosting/github.ts
-- [ ] T003 [P] Create workflow and hosted-context scaffolding in src/core/workflowState.ts and src/core/hostedContext.ts
-- [ ] T004 [P] Extend shared repo-fixture support for new workflow scenarios in tests/helpers/repoHarness.ts
+- [X] T001 Update package metadata and scripts for hosted integrations and new command coverage in package.json
+- [X] T002 [P] Create hosting adapter scaffolding in src/hosting/provider.ts, src/hosting/index.ts, and src/hosting/github.ts
+- [X] T003 [P] Create workflow and hosted-context scaffolding in src/core/workflowState.ts and src/core/hostedContext.ts
+- [X] T004 [P] Extend shared repo-fixture support for new workflow scenarios in tests/helpers/repoHarness.ts
 
 ---
 
@@ -24,11 +24,11 @@
 
 **⚠️ CRITICAL**: No user story work should begin until this phase is complete.
 
-- [ ] T005 Expand configuration schemas for hosting providers, AI context signaling, and command defaults in src/core/config.ts and src/commands/ai-configure.ts
-- [ ] T006 Implement repository-local learned-pattern persistence and pruning primitives in src/core/memory.ts and src/core/patternLearner.ts
-- [ ] T007 Implement workflow journal primitives and audit hooks in src/core/workflowState.ts and src/core/telemetry.ts
-- [ ] T008 [P] Extend shared output and repository snapshot structures for hosted context and AI markers in src/core/output.ts and src/core/repositorySnapshot.ts
-- [ ] T009 [P] Implement hosting provider detection and factory wiring in src/hosting/provider.ts, src/hosting/index.ts, and src/core/git.ts
+- [X] T005 Expand configuration schemas for hosting providers, AI context signaling, and command defaults in src/core/config.ts and src/commands/ai-configure.ts
+- [X] T006 Implement repository-local learned-pattern persistence and pruning primitives in src/core/memory.ts and src/core/patternLearner.ts
+- [X] T007 Implement workflow journal primitives and audit hooks in src/core/workflowState.ts and src/core/telemetry.ts
+- [X] T008 [P] Extend shared output and repository snapshot structures for hosted context and AI markers in src/core/output.ts and src/core/repositorySnapshot.ts
+- [X] T009 [P] Implement hosting provider detection and factory wiring in src/hosting/provider.ts, src/hosting/index.ts, and src/core/git.ts
 
 **Checkpoint**: Shared storage, provider detection, output contracts, and workflow primitives are ready for story work.
 
@@ -42,17 +42,17 @@
 
 ### Tests for User Story 1
 
-- [ ] T010 [P] [US1] Add command contract coverage for `sg wtf --learn` and `sg wtf --fix-ci` in tests/contract/wtf.contract.test.ts
-- [ ] T011 [P] [US1] Add learned-warning and CI-diagnosis integration coverage in tests/integration/wtf.integration.test.ts
-- [ ] T012 [P] [US1] Add unit coverage for pattern thresholds, pruning, and AI markers in tests/unit/patternLearner.test.ts
+- [X] T010 [P] [US1] Add command contract coverage for `sg wtf --learn` and `sg wtf --fix-ci` in tests/contract/wtf.contract.test.ts
+- [X] T011 [P] [US1] Add learned-warning and CI-diagnosis integration coverage in tests/integration/wtf.integration.test.ts
+- [X] T012 [P] [US1] Add unit coverage for pattern thresholds, pruning, and AI markers in tests/unit/patternLearner.test.ts
 
 ### Implementation for User Story 1
 
-- [ ] T013 [US1] Implement learned-pattern activation thresholds and pruning behavior in src/core/patternLearner.ts and src/core/memory.ts
-- [ ] T014 [US1] Implement AI-context payload creation and provider-backed diagnosis prompts in src/ai/prompts.ts, src/ai/providers.ts, and src/core/explainer.ts
-- [ ] T015 [US1] Extend panic-button diagnosis for `--learn` and `--fix-ci` modes in src/commands/wtf.ts and src/core/output.ts
-- [ ] T016 [US1] Surface learned pre-push warnings through shared predictive checks in src/core/predictor.ts and src/core/pushSafety.ts
-- [ ] T049 [US1] Implement direct remediation handoff actions from conflict/CI diagnostics in src/commands/wtf.ts and src/core/resolver.ts
+- [X] T013 [US1] Implement learned-pattern activation thresholds and pruning behavior in src/core/patternLearner.ts and src/core/memory.ts
+- [X] T014 [US1] Implement AI-context payload creation and provider-backed diagnosis prompts in src/ai/prompts.ts, src/ai/providers.ts, and src/core/explainer.ts
+- [X] T015 [US1] Extend panic-button diagnosis for `--learn` and `--fix-ci` modes in src/commands/wtf.ts and src/core/output.ts
+- [X] T016 [US1] Surface learned pre-push warnings through shared predictive checks in src/core/predictor.ts and src/core/pushSafety.ts
+- [X] T049 [US1] Implement direct remediation handoff actions from conflict/CI diagnostics in src/commands/wtf.ts and src/core/resolver.ts
 
 **Checkpoint**: `sg wtf` learns locally, explains CI/conflict failures, and stays independently testable as the MVP slice.
 
@@ -66,17 +66,17 @@
 
 ### Tests for User Story 2
 
-- [ ] T017 [P] [US2] Add contract coverage for `sg sync`, `sg ship`, and `sg ship status` in tests/contract/sync.contract.test.ts and tests/contract/ship.contract.test.ts
-- [ ] T018 [P] [US2] Add integration coverage for sync, ship handoff, and split grouping in tests/integration/sync.integration.test.ts, tests/integration/ship.integration.test.ts, and tests/integration/split.integration.test.ts
-- [ ] T019 [P] [US2] Add unit coverage for workflow checkpoints and split planning in tests/unit/workflowState.test.ts and tests/unit/coreServices.test.ts
+- [X] T017 [P] [US2] Add contract coverage for `sg sync`, `sg ship`, and `sg ship status` in tests/contract/sync.contract.test.ts and tests/contract/ship.contract.test.ts
+- [X] T018 [P] [US2] Add integration coverage for sync, ship handoff, and split grouping in tests/integration/sync.integration.test.ts, tests/integration/ship.integration.test.ts, and tests/integration/split.integration.test.ts
+- [X] T019 [P] [US2] Add unit coverage for workflow checkpoints and split planning in tests/unit/workflowState.test.ts and tests/unit/coreServices.test.ts
 
 ### Implementation for User Story 2
 
-- [ ] T020 [US2] Finalize resumable workflow persistence and checkpoint recovery in src/core/workflowState.ts and src/core/telemetry.ts
-- [ ] T021 [US2] Implement safe sync orchestration with local-work preservation in src/commands/sync.ts, src/core/git.ts, and src/core/resolver.ts
-- [ ] T022 [US2] Implement ship execution and status inspection with background handoff in src/commands/ship.ts, src/core/pushSafety.ts, and src/core/workflowState.ts
-- [ ] T023 [US2] Implement mixed-intent split planning and confirmation flow in src/commands/split.ts, src/core/commitPlanner.ts, and src/core/output.ts
-- [ ] T024 [US2] Register sync, ship, ship-status, and split command surfaces in src/cli.ts
+- [X] T020 [US2] Finalize resumable workflow persistence and checkpoint recovery in src/core/workflowState.ts and src/core/telemetry.ts
+- [X] T021 [US2] Implement safe sync orchestration with local-work preservation in src/commands/sync.ts, src/core/git.ts, and src/core/resolver.ts
+- [X] T022 [US2] Implement ship execution and status inspection with background handoff in src/commands/ship.ts, src/core/pushSafety.ts, and src/core/workflowState.ts
+- [X] T023 [US2] Implement mixed-intent split planning and confirmation flow in src/commands/split.ts, src/core/commitPlanner.ts, and src/core/output.ts
+- [X] T024 [US2] Register sync, ship, ship-status, and split command surfaces in src/cli.ts
 
 **Checkpoint**: `sg sync`, `sg ship`, and `sg split` are independently functional with persisted workflow state and contract-tested output.
 
@@ -90,17 +90,17 @@
 
 ### Tests for User Story 3
 
-- [ ] T025 [P] [US3] Add contract coverage for `sg who`, `sg blame --explain`, and `sg queue --team` in tests/contract/hosting.contract.test.ts and tests/contract/cli-output.contract.test.ts
-- [ ] T026 [P] [US3] Add integration coverage for hosted context success and fallback modes in tests/integration/hosted-context.integration.test.ts and tests/integration/status.integration.test.ts
-- [ ] T027 [P] [US3] Add unit coverage for provider detection and normalization in tests/unit/hostingProvider.test.ts
+- [X] T025 [P] [US3] Add contract coverage for `sg who`, `sg blame --explain`, and `sg queue --team` in tests/contract/hosting.contract.test.ts and tests/contract/cli-output.contract.test.ts
+- [X] T026 [P] [US3] Add integration coverage for hosted context success and fallback modes in tests/integration/hosted-context.integration.test.ts and tests/integration/status.integration.test.ts
+- [X] T027 [P] [US3] Add unit coverage for provider detection and normalization in tests/unit/hostingProvider.test.ts
 
 ### Implementation for User Story 3
 
-- [ ] T028 [US3] Implement provider-specific hosted queries and normalization in src/hosting/github.ts, src/hosting/index.ts, and src/hosting/provider.ts
-- [ ] T029 [US3] Implement hosted context aggregation and config-driven fallback behavior in src/core/hostedContext.ts, src/core/repositorySnapshot.ts, and src/core/config.ts
-- [ ] T030 [US3] Implement collaborator ownership and queue timing commands in src/commands/who.ts and src/commands/queue.ts
-- [ ] T031 [US3] Implement blame explanation with hosted rationale enrichment in src/commands/blame.ts, src/core/explainer.ts, and src/core/output.ts
-- [ ] T032 [US3] Register collaboration-aware command surfaces in src/cli.ts
+- [X] T028 [US3] Implement provider-specific hosted queries and normalization in src/hosting/github.ts, src/hosting/index.ts, and src/hosting/provider.ts
+- [X] T029 [US3] Implement hosted context aggregation and config-driven fallback behavior in src/core/hostedContext.ts, src/core/repositorySnapshot.ts, and src/core/config.ts
+- [X] T030 [US3] Implement collaborator ownership and queue timing commands in src/commands/who.ts and src/commands/queue.ts
+- [X] T031 [US3] Implement blame explanation with hosted rationale enrichment in src/commands/blame.ts, src/core/explainer.ts, and src/core/output.ts
+- [X] T032 [US3] Register collaboration-aware command surfaces in src/cli.ts
 
 **Checkpoint**: Team-awareness commands work independently with host-agnostic provider wiring and local fallback behavior.
 
@@ -114,16 +114,16 @@
 
 ### Tests for User Story 4
 
-- [ ] T033 [P] [US4] Add contract coverage for `sg time-travel`, `sg pair`, and `sg doctor` in tests/contract/recovery.contract.test.ts and tests/contract/cli-output.contract.test.ts
-- [ ] T034 [P] [US4] Add integration coverage for advanced recovery flows in tests/integration/time-travel.integration.test.ts, tests/integration/pair.integration.test.ts, and tests/integration/doctor.integration.test.ts
-- [ ] T035 [P] [US4] Add unit coverage for pair-session state and doctor findings in tests/unit/coreServices.test.ts and tests/unit/workflowState.test.ts
+- [X] T033 [P] [US4] Add contract coverage for `sg time-travel`, `sg pair`, and `sg doctor` in tests/contract/recovery.contract.test.ts and tests/contract/cli-output.contract.test.ts
+- [X] T034 [P] [US4] Add integration coverage for advanced recovery flows in tests/integration/time-travel.integration.test.ts, tests/integration/pair.integration.test.ts, and tests/integration/doctor.integration.test.ts
+- [X] T035 [P] [US4] Add unit coverage for pair-session state and doctor findings in tests/unit/coreServices.test.ts and tests/unit/workflowState.test.ts
 
 ### Implementation for User Story 4
 
-- [ ] T036 [US4] Implement safe temporal navigation flow in src/commands/time-travel.ts, src/core/git.ts, and src/core/resolver.ts
-- [ ] T037 [US4] Implement pair-session lifecycle persistence and audit events in src/commands/pair.ts, src/core/workflowState.ts, and src/core/telemetry.ts
-- [ ] T038 [US4] Implement doctor health audit and prioritized reporting in src/commands/doctor.ts, src/core/repositorySnapshot.ts, and src/core/output.ts
-- [ ] T039 [US4] Register advanced recovery command surfaces in src/cli.ts
+- [X] T036 [US4] Implement safe temporal navigation flow in src/commands/time-travel.ts, src/core/git.ts, and src/core/resolver.ts
+- [X] T037 [US4] Implement pair-session lifecycle persistence and audit events in src/commands/pair.ts, src/core/workflowState.ts, and src/core/telemetry.ts
+- [X] T038 [US4] Implement doctor health audit and prioritized reporting in src/commands/doctor.ts, src/core/repositorySnapshot.ts, and src/core/output.ts
+- [X] T039 [US4] Register advanced recovery command surfaces in src/cli.ts
 
 **Checkpoint**: Advanced recovery and collaboration modes are independently functional and reversible where required.
 
@@ -133,16 +133,16 @@
 
 **Purpose**: Finish documentation, regressions, and release-quality verification across all stories.
 
-- [ ] T040 [P] Update feature and product documentation for new workflows in README.md, docs/index.html, and specs/002-indispensable-git-assistant/quickstart.md
-- [ ] T041 Verify performance budgets and long-running progress cadence in tests/integration/performance.integration.test.ts
-- [ ] T042 [P] Add cross-command output consistency regressions in tests/contract/cli-output.contract.test.ts and tests/contract/wtf.contract.test.ts
-- [ ] T043 Harden provider/config security and warning paths in src/core/config.ts, src/commands/ai-configure.ts, and src/hosting/index.ts
-- [ ] T044 Run quickstart validation and align examples with shipped command behavior in specs/002-indispensable-git-assistant/quickstart.md
-- [ ] T045 Run full quality gates via package.json (`build`, `lint`, `typecheck`, `test`) and fix any remaining issues referenced by package.json
-- [ ] T046 Implement rollout controls for high-risk automation paths in src/core/config.ts, src/commands/ship.ts, and src/commands/wtf.ts
-- [ ] T047 Add rollout-control verification coverage in tests/integration/ship.integration.test.ts and tests/integration/wtf.integration.test.ts
-- [ ] T048 Implement AI context scoping, redaction, and size-limit policy in src/core/config.ts, src/ai/providers.ts, and src/core/output.ts
-- [ ] T050 Define and execute post-release rollout-signal verification checklist (owner, signal set, pass/fail thresholds, rollback triggers, and verification window) in specs/002-indispensable-git-assistant/quickstart.md and specs/002-indispensable-git-assistant/checklists/safety.md
+- [X] T040 [P] Update feature and product documentation for new workflows in README.md, docs/index.html, and specs/002-indispensable-git-assistant/quickstart.md
+- [X] T041 Verify performance budgets and long-running progress cadence in tests/integration/performance.integration.test.ts
+- [X] T042 [P] Add cross-command output consistency regressions in tests/contract/cli-output.contract.test.ts and tests/contract/wtf.contract.test.ts
+- [X] T043 Harden provider/config security and warning paths in src/core/config.ts, src/commands/ai-configure.ts, and src/hosting/index.ts
+- [X] T044 Run quickstart validation and align examples with shipped command behavior in specs/002-indispensable-git-assistant/quickstart.md
+- [X] T045 Run full quality gates via package.json (`build`, `lint`, `typecheck`, `test`) and fix any remaining issues referenced by package.json
+- [X] T046 Implement rollout controls for high-risk automation paths in src/core/config.ts, src/commands/ship.ts, and src/commands/wtf.ts
+- [X] T047 Add rollout-control verification coverage in tests/integration/ship.integration.test.ts and tests/integration/wtf.integration.test.ts
+- [X] T048 Implement AI context scoping, redaction, and size-limit policy in src/core/config.ts, src/ai/providers.ts, and src/core/output.ts
+- [X] T050 Define and execute post-release rollout-signal verification checklist (owner, signal set, pass/fail thresholds, rollback triggers, and verification window) in specs/002-indispensable-git-assistant/quickstart.md and specs/002-indispensable-git-assistant/checklists/safety.md
 
 ---
 

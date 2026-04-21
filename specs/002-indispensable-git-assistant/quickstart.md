@@ -57,8 +57,8 @@ Expected:
 ## Scenario 4: Inspect Team and Queue Context
 
 ```bash
-sg who src/commands/wtf.ts
-sg blame --explain src/commands/wtf.ts
+sg who
+sg blame --file src/commands/wtf.ts --line 42 --explain
 sg queue --team
 ```
 
@@ -91,3 +91,21 @@ Expected:
 - `sg wtf`, `sg sync`, and `sg split` provide initial actionable output within 2 seconds on a typical 5k-file repository
 - Hosted workflows emit progress/status updates at least every 10 seconds while waiting on remote systems
 - Existing `sg status`, `sg wtf`, and `sg check` median runtime regression stays within 15% of current baseline
+
+## Post-Release Rollout Verification Checklist
+
+- Owner: release engineer on call for the deployment window
+- Signal set:
+	- `sg ship` workflow failure rate
+	- `sg wtf --fix-ci` remediation invocation count
+	- degraded-mode event count for hosted and AI-backed commands
+	- median runtime of `sg status`, `sg wtf`, and `sg check`
+- Pass/fail thresholds:
+	- No greater than 15% runtime regression for baseline commands
+	- No increase in critical workflow failures versus prior release baseline
+	- Rollout-control gates remain active for high-risk automation until verification pass
+- Rollback triggers:
+	- sustained critical workflow failure rate above baseline for 30 minutes
+	- unexpected destructive-action reports with missing confirmation gates
+- Verification window:
+	- first 24 hours after release, with checkpoints at 1h, 4h, and 24h

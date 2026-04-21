@@ -75,6 +75,15 @@ npm link
 | `sg fix` | Guided recovery from common git failures |
 | `sg undo` | Safe rollback options with consequences |
 | `sg wtf` | Your panic button: diagnoses everything wrong and fixes it |
+| `sg sync` | Preserve local work and synchronize with mainline |
+| `sg ship` | One-command delivery flow with tracked background status |
+| `sg split` | Propose logical commit groups from staged changes |
+| `sg who` | Show collaborator ownership context |
+| `sg queue --team` | Show merge queue impact and risk hints |
+| `sg blame --explain` | Explain line history with collaboration context |
+| `sg time-travel` | Resolve safe historical navigation targets |
+| `sg pair` | Start, inspect, and hand off pair sessions |
+| `sg doctor` | Run deep repository health diagnostics |
 | `sg ai-configure` | Setup AI provider integration |
 
 ## Configuration

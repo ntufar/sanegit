@@ -33,3 +33,33 @@ export async function assertGitRepo(
   const result = await runGit(["rev-parse", "--is-inside-work-tree"], cwd);
   return result.exitCode === 0 && result.stdout.trim() === "true";
 }
+
+export async function getRemoteUrl(
+  cwd: string = process.cwd(),
+): Promise<string | undefined> {
+  const result = await runGit(["remote", "get-url", "origin"], cwd);
+  if (result.exitCode !== 0) {
+    return undefined;
+  }
+  const url = result.stdout.trim();
+  return url.length > 0 ? url : undefined;
+}
+
+export async function detectHostingProviderFromGit(
+  cwd: string = process.cwd(),
+): Promise<"github" | "gitlab" | "bitbucket" | "unknown"> {
+  const remote = await getRemoteUrl(cwd);
+  if (!remote) {
+    return "unknown";
+  }
+  if (remote.includes("github.com")) {
+    return "github";
+  }
+  if (remote.includes("gitlab.com")) {
+    return "gitlab";
+  }
+  if (remote.includes("bitbucket.org")) {
+    return "bitbucket";
+  }
+  return "unknown";
+}

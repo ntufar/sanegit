@@ -9,6 +9,12 @@ export interface TelemetryEvent {
   timestamp?: string;
 }
 
+export interface WorkflowAuditEvent {
+  workflowId: string;
+  step: string;
+  status: "running" | "completed" | "failed";
+}
+
 export function redactSecrets(text: string): string {
   return text
     .replace(/(api[_-]?key\s*[=:]\s*)([^\s]+)/gi, "$1[REDACTED]")
@@ -27,4 +33,19 @@ export async function logEvent(
     timestamp: event.timestamp ?? new Date().toISOString(),
   });
   await appendFile(join(dir, "audit.log"), `${line}\n`, "utf8");
+}
+
+export async function logWorkflowEvent(
+  command: string,
+  workflow: WorkflowAuditEvent,
+  cwd: string = process.cwd(),
+): Promise<void> {
+  await logEvent(
+    {
+      command,
+      outcome: workflow.status === "failed" ? "failure" : "success",
+      detail: `workflow:${workflow.workflowId}:${workflow.step}:${workflow.status}`,
+    },
+    cwd,
+  );
 }

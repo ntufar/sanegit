@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { redactSecrets } from "../../src/core/telemetry.js";
 import { validateConfig } from "../../src/core/config.js";
 import { predictPushRisk } from "../../src/core/predictor.js";
+import { getRepositorySnapshot } from "../../src/core/repositorySnapshot.js";
 
 describe("core services", () => {
   it("redacts API key-like tokens", () => {
@@ -17,5 +18,10 @@ describe("core services", () => {
   it("returns predictor result shape", async () => {
     const result = await predictPushRisk(process.cwd());
     expect(Array.isArray(result.reasons)).toBe(true);
+  });
+
+  it("returns repository snapshot shape for doctor command", async () => {
+    const snapshot = await getRepositorySnapshot(process.cwd());
+    expect(snapshot.branch.length).toBeGreaterThan(0);
   });
 });

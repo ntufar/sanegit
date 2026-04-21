@@ -1,5 +1,6 @@
 import type { RiskLevel } from "./output.js";
 import { runGit } from "./git.js";
+import { getPredictiveWarnings } from "./patternLearner.js";
 
 export interface PredictionResult {
   risk: RiskLevel;
@@ -33,6 +34,19 @@ export async function predictPushRisk(
   if (reasons.length === 0) {
     reasons.push("No immediate push risk indicators found.");
     risk = "none";
+  }
+
+  const learnedWarnings = await getPredictiveWarnings(cwd);
+  if (learnedWarnings.length > 0) {
+    const top = learnedWarnings[0];
+    if (top) {
+      if (risk === "none" || risk === "low") {
+        risk = "medium";
+      }
+      reasons.push(
+        `Learned warning (${top.confidence.toFixed(2)} confidence): ${top.warning}`,
+      );
+    }
   }
 
   return { risk, reasons };

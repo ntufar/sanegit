@@ -60,3 +60,33 @@ export async function buildFixPlan(
     detail: ["No merge markers found."],
   };
 }
+
+export async function runWtfRemediation(
+  issueKey: "unresolved-conflicts" | "last-ci-failed",
+  cwd: string = process.cwd(),
+): Promise<RecoveryPlan> {
+  if (issueKey === "unresolved-conflicts") {
+    return buildFixPlan(cwd);
+  }
+
+  if (issueKey === "last-ci-failed") {
+    const status = await runGit(["status", "--short"], cwd);
+    return {
+      summary: "Prepared CI remediation handoff.",
+      risk: "medium",
+      recommendation:
+        "Reproduce the failing test locally and apply the smallest corrective change before re-running CI.",
+      detail: [
+        "Collected local repository state for CI remediation.",
+        `Working tree entries: ${status.stdout.split("\n").filter(Boolean).length}`,
+      ],
+    };
+  }
+
+  return {
+    summary: "No remediation available for this issue.",
+    risk: "low",
+    recommendation: "Use sg check for additional diagnostics.",
+    detail: ["Selected issue type has no mapped remediation path."],
+  };
+}

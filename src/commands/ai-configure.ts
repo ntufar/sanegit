@@ -1,4 +1,5 @@
 import {
+  loadConfig,
   saveConfig,
   validateConfig,
   type SaneGitConfig,
@@ -17,10 +18,14 @@ export async function runAiConfigure(
   input: AiConfigureInput,
 ): Promise<{ ok: boolean; warnings: string[]; errors: string[] }> {
   const cwd = input.cwd ?? process.cwd();
+  const existing = await loadConfig(cwd);
   const config: SaneGitConfig = {
     provider: input.provider,
     customBaseUrl: input.customBaseUrl,
     credentialRef: input.credentialRef,
+    aiContext: existing.aiContext,
+    commandDefaults: existing.commandDefaults,
+    hosting: existing.hosting,
   };
 
   const validation = validateConfig(config);

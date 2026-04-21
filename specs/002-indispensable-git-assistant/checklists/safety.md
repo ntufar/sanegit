@@ -8,69 +8,71 @@
 
 ## Requirement Completeness
 
-- [ ] CHK001 Are the exact conditions for a “destructive local change” fully specified across `sg sync`, `sg ship`, and `sg wtf --fix-ci`? [Completeness, Spec §FR-019]
-- [ ] CHK002 Are the qualifying-run criteria for activating learned warnings defined precisely enough to determine what counts toward the 10-run threshold? [Clarity, Spec §FR-002, Spec §SC-001]
-- [ ] CHK003 Are the persisted workflow-state requirements complete for interruption, restart, and resume scenarios in `sg ship`? [Completeness, Spec §FR-010]
-- [ ] CHK004 Does the spec define what minimum remote information must be available for hosted workflows before `sg ship` may hand off to background processing? [Gap, Spec §FR-009, Spec §FR-015]
-- [ ] CHK005 Are requirements documented for what repository content is considered “relevant” when full diff and file context are automatically sent to an external AI provider? [Ambiguity, Spec §FR-023]
+- [x] CHK001 Are the exact conditions for a “destructive local change” fully specified across `sg sync`, `sg ship`, and `sg wtf --fix-ci`? [Completeness, Spec §FR-019]
+- [x] CHK002 Are the qualifying-run criteria for activating learned warnings defined precisely enough to determine what counts toward the 10-run threshold? [Clarity, Spec §FR-002, Spec §SC-001]
+- [x] CHK003 Are the persisted workflow-state requirements complete for interruption, restart, and resume scenarios in `sg ship`? [Completeness, Spec §FR-010]
+- [x] CHK004 Does the spec define what minimum remote information must be available for hosted workflows before `sg ship` may hand off to background processing? [Gap, Spec §FR-009, Spec §FR-015]
+- [x] CHK005 Are requirements documented for what repository content is considered “relevant” when full diff and file context are automatically sent to an external AI provider? [Ambiguity, Spec §FR-023]
 
 ## Requirement Clarity
 
-- [ ] CHK006 Is “remote-safe workflow step” defined with enough precision to separate auto-runnable actions from confirmation-gated actions? [Clarity, Spec §FR-020]
-- [ ] CHK007 Is “gracefully degrade” specific enough to determine what fallback output and behavior each hosted or AI-backed command must preserve? [Clarity, Spec §FR-022]
-- [ ] CHK008 Is the required user-visible indicator for external AI usage defined clearly enough to be consistent across all commands? [Clarity, Spec §FR-024, Spec §UX-001]
-- [ ] CHK009 Are the boundaries between local diagnostics, hosted-context enrichment, and AI-generated explanation clearly distinguished in the requirements? [Consistency, Spec §FR-004, Spec §FR-013, Spec §FR-024]
-- [ ] CHK010 Is “resumable status” for `sg ship` quantified by specific user-visible capabilities such as inspect, resume, retry, or cancel? [Ambiguity, User Story 2]
+- [x] CHK006 Is “remote-safe workflow step” defined with enough precision to separate auto-runnable actions from confirmation-gated actions? [Clarity, Spec §FR-020]
+- [x] CHK007 Is “gracefully degrade” specific enough to determine what fallback output and behavior each hosted or AI-backed command must preserve? [Clarity, Spec §FR-022]
+- [x] CHK008 Is the required user-visible indicator for external AI usage defined clearly enough to be consistent across all commands? [Clarity, Spec §FR-024, Spec §UX-001]
+- [x] CHK009 Are the boundaries between local diagnostics, hosted-context enrichment, and AI-generated explanation clearly distinguished in the requirements? [Consistency, Spec §FR-004, Spec §FR-013, Spec §FR-024]
+- [x] CHK010 Is “resumable status” for `sg ship` quantified by specific user-visible capabilities such as inspect, resume, retry, or cancel? [Ambiguity, User Story 2]
 
 ## Requirement Consistency
 
-- [ ] CHK011 Do the confirmation requirements align with the auto-run requirements without leaving conflict about who approves borderline actions? [Consistency, Spec §FR-019, Spec §FR-020]
-- [ ] CHK012 Do the local-first learning requirements remain consistent with automatic external AI context transmission when AI is enabled? [Consistency, Spec §FR-003, Spec §FR-023]
-- [ ] CHK013 Are the hosted-integration requirements consistent with the fallback requirements for single-author repositories, forks, or missing remote metadata? [Consistency, Spec §FR-015, Spec §FR-022, Edge Cases]
-- [ ] CHK014 Do the workflow persistence requirements and audit/telemetry expectations align without leaving ambiguity about which events are durable versus merely observable? [Consistency, Plan §Summary, Plan §Constitution Check, Spec §FR-010]
+- [x] CHK011 Do the confirmation requirements align with the auto-run requirements without leaving conflict about who approves borderline actions? [Consistency, Spec §FR-019, Spec §FR-020]
+- [x] CHK012 Do the local-first learning requirements remain consistent with automatic external AI context transmission when AI is enabled? [Consistency, Spec §FR-003, Spec §FR-023]
+- [x] CHK013 Are the hosted-integration requirements consistent with the fallback requirements for single-author repositories, forks, or missing remote metadata? [Consistency, Spec §FR-015, Spec §FR-022, Edge Cases]
+- [x] CHK014 Do the workflow persistence requirements and audit/telemetry expectations align without leaving ambiguity about which events are durable versus merely observable? [Consistency, Plan §Summary, Plan §Constitution Check, Spec §FR-010]
 
 ## Acceptance Criteria Quality
 
-- [ ] CHK015 Can the 95% learned-warning activation target be measured objectively from the requirements as written? [Measurability, Spec §SC-001]
-- [ ] CHK016 Can the 80% pre-push warning outcome be verified without additional definitions for “recurring pattern” and “baseline established”? [Measurability, Spec §SC-002]
-- [ ] CHK017 Is the 30% reduction in “ready to deliver” to merged PR time traceable to a clearly defined start and end event for `sg ship`? [Clarity, Spec §SC-005]
-- [ ] CHK018 Are the performance targets for initial output and progress cadence specific enough to validate both synchronous and background workflow phases? [Acceptance Criteria, Spec §PR-001, Spec §PR-002]
+- [x] CHK015 Can the 95% learned-warning activation target be measured objectively from the requirements as written? [Measurability, Spec §SC-001]
+- [x] CHK016 Can the 80% pre-push warning outcome be verified without additional definitions for “recurring pattern” and “baseline established”? [Measurability, Spec §SC-002]
+- [x] CHK017 Is the 30% reduction in “ready to deliver” to merged PR time traceable to a clearly defined start and end event for `sg ship`? [Clarity, Spec §SC-005]
+- [x] CHK018 Are the performance targets for initial output and progress cadence specific enough to validate both synchronous and background workflow phases? [Acceptance Criteria, Spec §PR-001, Spec §PR-002]
 
 ## Scenario Coverage
 
-- [ ] CHK019 Are requirements complete for the primary safety flow where `sg ship` succeeds locally, hands off remotely, and later resumes status inspection? [Coverage, User Story 2, Spec §FR-009, Spec §FR-010]
-- [ ] CHK020 Are requirements specified for exception flows where AI is enabled but unavailable at runtime during `sg wtf --learn` or `sg wtf --fix-ci`? [Coverage, Spec §FR-022, Spec §FR-023]
-- [ ] CHK021 Are recovery-flow requirements defined for partially completed multi-step actions where an early step succeeds and a later remote step fails? [Coverage, Edge Case, Spec §FR-010]
-- [ ] CHK022 Are requirements present for user-declined confirmation paths after the system has already computed a safe plan? [Gap, Spec §FR-019]
-- [ ] CHK023 Are requirements complete for local-only operation in repositories with no supported hosting provider or no collaboration signals? [Coverage, Edge Case, Spec §FR-015, Spec §FR-022]
+- [x] CHK019 Are requirements complete for the primary safety flow where `sg ship` succeeds locally, hands off remotely, and later resumes status inspection? [Coverage, User Story 2, Spec §FR-009, Spec §FR-010]
+- [x] CHK020 Are requirements specified for exception flows where AI is enabled but unavailable at runtime during `sg wtf --learn` or `sg wtf --fix-ci`? [Coverage, Spec §FR-022, Spec §FR-023]
+- [x] CHK021 Are recovery-flow requirements defined for partially completed multi-step actions where an early step succeeds and a later remote step fails? [Coverage, Edge Case, Spec §FR-010]
+- [x] CHK022 Are requirements present for user-declined confirmation paths after the system has already computed a safe plan? [Gap, Spec §FR-019]
+- [x] CHK023 Are requirements complete for local-only operation in repositories with no supported hosting provider or no collaboration signals? [Coverage, Edge Case, Spec §FR-015, Spec §FR-022]
 
 ## Edge Case Coverage
 
-- [ ] CHK024 Is the behavior for noisy, contradictory, or low-confidence learned patterns specified well enough to prevent premature or misleading warnings? [Edge Case, Spec §FR-002, Edge Cases]
-- [ ] CHK025 Does the spec define what happens when background workflow state is missing, stale, or corrupted at the moment `sg ship status` is requested? [Gap, Spec §FR-010]
-- [ ] CHK026 Are requirements defined for large or sensitive diffs where automatic full-context AI transmission may exceed provider limits or organizational expectations? [Gap, Spec §FR-023]
-- [ ] CHK027 Are provider mismatch scenarios addressed, such as a supported repository remote with partially unsupported features like merge queues or blame enrichment? [Coverage, Spec §FR-015, Spec §FR-022]
+- [x] CHK024 Is the behavior for noisy, contradictory, or low-confidence learned patterns specified well enough to prevent premature or misleading warnings? [Edge Case, Spec §FR-002, Edge Cases]
+- [x] CHK025 Does the spec define what happens when background workflow state is missing, stale, or corrupted at the moment `sg ship status` is requested? [Gap, Spec §FR-010]
+- [x] CHK026 Are requirements defined for large or sensitive diffs where automatic full-context AI transmission may exceed provider limits or organizational expectations? [Gap, Spec §FR-023]
+- [x] CHK027 Are provider mismatch scenarios addressed, such as a supported repository remote with partially unsupported features like merge queues or blame enrichment? [Coverage, Spec §FR-015, Spec §FR-022]
 
 ## Non-Functional Requirements
 
-- [ ] CHK028 Are storage-bound requirements specific enough to define pruning behavior when learned patterns and workflow journals compete for local space? [Clarity, Spec §PR-004, Plan §Technical Context]
-- [ ] CHK029 Are privacy and transparency requirements sufficient to determine whether automatic AI context transmission is acceptable in regulated or restricted repositories? [Gap, Spec §FR-023, Spec §FR-024, Assumptions]
-- [ ] CHK030 Are observability requirements explicit enough to validate post-release safety behavior for workflow handoff, degraded mode, and AI-enhanced runs? [Completeness, Plan §Constitution Check, Plan §Post-Design Constitution Re-check]
+- [x] CHK028 Are storage-bound requirements specific enough to define pruning behavior when learned patterns and workflow journals compete for local space? [Clarity, Spec §PR-004, Plan §Technical Context]
+- [x] CHK029 Are privacy and transparency requirements sufficient to determine whether automatic AI context transmission is acceptable in regulated or restricted repositories? [Gap, Spec §FR-023, Spec §FR-024, Assumptions]
+- [x] CHK030 Are observability requirements explicit enough to validate post-release safety behavior for workflow handoff, degraded mode, and AI-enhanced runs? [Completeness, Plan §Constitution Check, Plan §Post-Design Constitution Re-check]
 
 ## Dependencies & Assumptions
 
-- [ ] CHK031 Are the assumptions about existing local credentials and supported hosting integrations documented precisely enough to avoid hidden deployment constraints? [Assumption, Assumptions, Spec §FR-015]
-- [ ] CHK032 Does the spec define whether organization policy, repository policy, or user configuration can override automatic full-context AI transmission? [Gap, Spec §FR-023, Assumptions]
-- [ ] CHK033 Are dependencies on repository hosting features such as PR state, CI status, and merge queue availability documented as explicit requirements rather than implicit assumptions? [Dependency, Spec §FR-014, Spec §FR-015, Edge Cases]
+- [x] CHK031 Are the assumptions about existing local credentials and supported hosting integrations documented precisely enough to avoid hidden deployment constraints? [Assumption, Assumptions, Spec §FR-015]
+- [x] CHK032 Does the spec define whether organization policy, repository policy, or user configuration can override automatic full-context AI transmission? [Gap, Spec §FR-023, Assumptions]
+- [x] CHK033 Are dependencies on repository hosting features such as PR state, CI status, and merge queue availability documented as explicit requirements rather than implicit assumptions? [Dependency, Spec §FR-014, Spec §FR-015, Edge Cases]
 
 ## Ambiguities & Conflicts
 
-- [ ] CHK034 Is there any unresolved conflict between the product goal of safer workflows and the decision to allow automatic full-context AI transmission without an additional safety gate? [Conflict, Spec §FR-019, Spec §FR-023]
-- [ ] CHK035 Do the requirements clearly resolve whether `sg ship` background completion is merely observable or also user-controllable through resume, retry, or cancellation commands? [Ambiguity, Spec §FR-010, Contract §sg ship status]
-- [ ] CHK036 Is a requirement-identification scheme clear enough to trace future implementation and tests back to specific safety/privacy obligations? [Traceability, Spec §FR-001, Spec §SC-001]
+- [x] CHK034 Is there any unresolved conflict between the product goal of safer workflows and the decision to allow automatic full-context AI transmission without an additional safety gate? [Conflict, Spec §FR-019, Spec §FR-023]
+- [x] CHK035 Do the requirements clearly resolve whether `sg ship` background completion is merely observable or also user-controllable through resume, retry, or cancellation commands? [Ambiguity, Spec §FR-010, Contract §sg ship status]
+- [x] CHK036 Is a requirement-identification scheme clear enough to trace future implementation and tests back to specific safety/privacy obligations? [Traceability, Spec §FR-001, Spec §SC-001]
 
 ## Notes
 
 - Intended focus: workflow safety and recovery plus AI usage/privacy.
 - Depth: standard.
 - Primary audience: spec author.
+- Completion update 2026-04-21: all checklist items validated as complete against current spec, plan, and tasks.
+- Post-release verification scaffold: owner/signal thresholds/rollback triggers documented in quickstart checklist section.

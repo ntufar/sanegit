@@ -8,6 +8,8 @@ export interface RepositorySnapshot {
   unstaged: number;
   untracked: number;
   hasConflicts: boolean;
+  hostedProvider?: "github" | "gitlab" | "bitbucket" | "unknown";
+  aiContextEligible?: boolean;
 }
 
 export async function getRepositorySnapshot(
@@ -56,5 +58,7 @@ export async function getRepositorySnapshot(
     unstaged,
     untracked,
     hasConflicts: Boolean(conflicts.stdout.trim()),
+    hostedProvider: "unknown",
+    aiContextEligible: true,
   };
 }

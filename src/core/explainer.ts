@@ -1,6 +1,7 @@
 import { PROMPTS } from "../ai/prompts.js";
-import { createProvider } from "../ai/providers.js";
+import { buildAiContextPayload, createProvider } from "../ai/providers.js";
 import { loadConfig, providerToBaseUrl, resolveCredential } from "./config.js";
+import { runGit } from "./git.js";
 
 export interface ExplainResult {
   text: string;
@@ -30,4 +31,40 @@ export async function explainChanges(
 
   const text = await provider.summarizeChangeSet(changeSummary);
   return { text, degradedMode: false };
+}
+
+export async function diagnoseCiFailure(
+  cwd: string = process.cwd(),
+): Promise<ExplainResult & { truncated: boolean }> {
+  const config = await loadConfig(cwd);
+  const credential = resolveCredential(config);
+  const diff = await runGit(["diff", "--staged"], cwd);
+  const payload = buildAiContextPayload({
+    command: "wtf --fix-ci",
+    diff: diff.stdout,
+    referencedFiles: [],
+    maxPayloadBytes: config.aiContext.maxPayloadBytes,
+  });
+
+  if (!credential.apiKey) {
+    return {
+      text: `${PROMPTS.diagnoseCiFailure} (fallback)`,
+      degradedMode: true,
+      truncated: payload.truncated,
+    };
+  }
+
+  const baseUrl = config.customBaseUrl ?? providerToBaseUrl(config.provider);
+
+  const provider = createProvider({
+    provider: config.provider,
+    ...(baseUrl ? { baseUrl } : {}),
+    apiKey: credential.apiKey,
+  });
+
+  const diagnosis = provider.diagnoseFailure
+    ? await provider.diagnoseFailure(`${PROMPTS.diagnoseCiFailure}\n${payload.diff}`)
+    : await provider.summarizeChangeSet(`${PROMPTS.diagnoseCiFailure}\n${payload.diff}`);
+
+  return { text: diagnosis, degradedMode: false, truncated: payload.truncated };
 }

@@ -3,6 +3,10 @@ import { execFile } from "node:child_process";
 import { resolve } from "node:path";
 import { promisify } from "node:util";
 import { formatCommandOutput } from "../core/output.js";
+import { loadConfig } from "../core/config.js";
+import { diagnoseCiFailure } from "../core/explainer.js";
+import { learnFromSignals } from "../core/patternLearner.js";
+import { runWtfRemediation } from "../core/resolver.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -49,6 +53,8 @@ export interface WtfDiagnosis {
 
 export interface WtfCommandOptions {
   cwd?: string;
+  learnMode?: boolean;
+  fixCiMode?: boolean;
   io?: {
     write(text: string): void;
     confirm?(prompt: string): Promise<boolean>;
@@ -70,8 +76,52 @@ export async function runWtfCommand(
   options: WtfCommandOptions = {},
 ): Promise<WtfDiagnosis> {
   const cwd = options.cwd ?? process.cwd();
+  const config = await loadConfig(cwd);
 
   const diagnosis = await collectDiagnosis(cwd, options);
+
+  if (options.learnMode) {
+    const learnSignals = diagnosis.issues
+      .map((issue) => issue.key)
+      .filter(
+        (key): key is "unresolved-conflicts" | "last-ci-failed" =>
+          key === "unresolved-conflicts" || key === "last-ci-failed",
+      );
+    if (learnSignals.length > 0) {
+      await learnFromSignals(learnSignals, cwd);
+      diagnosis.detail.push(
+        `Learn mode captured ${learnSignals.length} diagnosable signal(s).`,
+      );
+    } else {
+      diagnosis.detail.push("Learn mode found no qualifying signals this run.");
+    }
+  }
+
+  if (options.fixCiMode) {
+    const aiDiagnosis = await diagnoseCiFailure(cwd);
+    diagnosis.detail.push(`CI diagnosis: ${aiDiagnosis.text}`);
+    if (aiDiagnosis.truncated) {
+      diagnosis.detail.push(
+        "AI context was truncated according to payload-size guardrails.",
+      );
+    }
+    if (!config.commandDefaults.enableFixCiAutomation) {
+      diagnosis.detail.push(
+        "Fix-ci automation is disabled by rollout controls.",
+      );
+    }
+
+    const ciIssue = diagnosis.issues.find((issue) => issue.key === "last-ci-failed");
+    if (ciIssue) {
+      if (config.commandDefaults.enableFixCiAutomation) {
+        const plan = await runWtfRemediation("last-ci-failed", cwd);
+        diagnosis.detail.push(
+          ...plan.detail.map((entry) => `Remediation: ${entry}`),
+        );
+      }
+    }
+  }
+
   const output = formatWtfDiagnosis(diagnosis);
 
   (options.io ?? { write: (text: string) => process.stdout.write(text) }).write(
@@ -86,6 +136,20 @@ export async function runWtfCommand(
 
     if (shouldApply) {
       await options.applyFixes(diagnosis);
+
+      const conflictIssue = diagnosis.issues.find(
+        (issue) => issue.key === "unresolved-conflicts",
+      );
+      const ciIssue = diagnosis.issues.find(
+        (issue) => issue.key === "last-ci-failed",
+      );
+
+      if (conflictIssue) {
+        await runWtfRemediation("unresolved-conflicts", cwd);
+      }
+      if (ciIssue) {
+        await runWtfRemediation("last-ci-failed", cwd);
+      }
     }
   }
 

@@ -10,6 +10,15 @@ import { runUndo } from "./commands/undo.js";
 import { runWtfCommand } from "./commands/wtf.js";
 import { predictMergeQueueRisk } from "./core/predictor.js";
 import { runAiConfigure } from "./commands/ai-configure.js";
+import { runSync } from "./commands/sync.js";
+import { runShip, runShipStatus } from "./commands/ship.js";
+import { runSplit } from "./commands/split.js";
+import { runWho } from "./commands/who.js";
+import { runQueueTeam } from "./commands/queue.js";
+import { runBlameExplain } from "./commands/blame.js";
+import { runTimeTravel } from "./commands/time-travel.js";
+import { runPairHandoff, runPairStart, runPairStatus } from "./commands/pair.js";
+import { runDoctor } from "./commands/doctor.js";
 
 const program = new Command();
 
@@ -67,8 +76,14 @@ program
 program
   .command("wtf")
   .description("Diagnose urgent repository problems")
-  .action(async () => {
-    await runWtfCommand({ predictor: { check: predictMergeQueueRisk } });
+  .option("--learn", "Record qualifying local fault signals")
+  .option("--fix-ci", "Run CI-focused diagnosis and remediation handoff")
+  .action(async (options: { learn?: boolean; fixCi?: boolean }) => {
+    await runWtfCommand({
+      predictor: { check: predictMergeQueueRisk },
+      learnMode: options.learn ?? false,
+      fixCiMode: options.fixCi ?? false,
+    });
   });
 
 program
@@ -96,6 +111,95 @@ program
       await runAiConfigure(input);
     },
   );
+
+program
+  .command("sync")
+  .description("Safely preserve local work and sync with mainline")
+  .action(async () => {
+    await runSync();
+  });
+
+program
+  .command("ship")
+  .description("Run one-command delivery flow with tracked background handoff")
+  .option("--status", "Show current ship workflow status")
+  .action(async (options: { status?: boolean }) => {
+    if (options.status) {
+      await runShipStatus();
+      return;
+    }
+    await runShip();
+  });
+
+program
+  .command("split")
+  .description("Propose logical commit groups from staged changes")
+  .action(async () => {
+    await runSplit();
+  });
+
+program
+  .command("who")
+  .description("Show collaborator and ownership context")
+  .action(async () => {
+    await runWho();
+  });
+
+program
+  .command("queue")
+  .description("Inspect merge queue state")
+  .option("--team", "Show team queue impact details")
+  .action(async (options: { team?: boolean }) => {
+    if (options.team) {
+      await runQueueTeam();
+    }
+  });
+
+program
+  .command("blame")
+  .description("Explain line-level history with hosted context")
+  .requiredOption("--file <file>", "File path")
+  .requiredOption("--line <line>", "Line number")
+  .option("--explain", "Return explanation mode")
+  .action(async (options: { file: string; line: string; explain?: boolean }) => {
+    if (options.explain) {
+      await runBlameExplain(options.file, Number.parseInt(options.line, 10));
+    }
+  });
+
+program
+  .command("time-travel")
+  .description("Resolve natural-language or revision references safely")
+  .requiredOption("--to <reference>", "Reference to resolve")
+  .action(async (options: { to: string }) => {
+    await runTimeTravel(options.to);
+  });
+
+program
+  .command("pair")
+  .description("Manage lightweight pair programming sessions")
+  .requiredOption("--action <action>", "start|status|handoff")
+  .option("--session <sessionId>", "Pair session ID for status/handoff")
+  .action(async (options: { action: string; session?: string }) => {
+    if (options.action === "start") {
+      await runPairStart();
+      return;
+    }
+    if (options.action === "status" && options.session) {
+      await runPairStatus(options.session);
+      return;
+    }
+    if (options.action === "handoff" && options.session) {
+      await runPairHandoff(options.session);
+    }
+  });
+
+program
+  .command("doctor")
+  .description("Run deep repository health diagnostics")
+  .action(async () => {
+    await runDoctor();
+  });
 
 program.parseAsync(process.argv).catch((error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);

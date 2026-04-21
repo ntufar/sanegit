@@ -6,6 +6,9 @@ export interface CommandOutput {
   recommendation: string;
   detail?: string[];
   degradedMode?: boolean;
+  aiBacked?: boolean;
+  aiContextTruncated?: boolean;
+  hostedContextSource?: "local" | "remote" | "mixed";
 }
 
 interface OutputFormatOptions {
@@ -81,6 +84,36 @@ export function formatCommandOutput(
       colorize(
         "- Degraded mode: AI or optional remote diagnostics unavailable.",
         [ANSI.dim, ANSI.yellow],
+        colorEnabled,
+      ),
+    );
+  }
+
+  if (output.aiBacked) {
+    lines.push(
+      colorize(
+        "- AI-assisted analysis enabled for this command.",
+        [ANSI.dim, ANSI.cyan],
+        colorEnabled,
+      ),
+    );
+  }
+
+  if (output.aiContextTruncated) {
+    lines.push(
+      colorize(
+        "- AI context was truncated to satisfy payload-size guardrails.",
+        [ANSI.dim, ANSI.yellow],
+        colorEnabled,
+      ),
+    );
+  }
+
+  if (output.hostedContextSource) {
+    lines.push(
+      colorize(
+        `- Hosted context source: ${output.hostedContextSource}.`,
+        [ANSI.dim],
         colorEnabled,
       ),
     );
