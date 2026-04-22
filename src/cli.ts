@@ -1,5 +1,18 @@
 #!/usr/bin/env node
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { Command } from "commander";
+
+function getVersion(): string {
+  try {
+    const pkg = JSON.parse(
+      readFileSync(join(process.cwd(), "package.json"), "utf8"),
+    );
+    return pkg.version ?? "unknown";
+  } catch {
+    return "unknown";
+  }
+}
 import { runStatus } from "./commands/status.js";
 import { runExplain } from "./commands/explain.js";
 import { runCommit } from "./commands/commit.js";
@@ -22,7 +35,7 @@ import { runDoctor } from "./commands/doctor.js";
 
 const program = new Command();
 
-program.name("sg").description("SaneGit command assistant").version("0.1.0");
+program.name("sg").description("SaneGit command assistant").version(getVersion());
 
 program
   .command("status")
