@@ -24,17 +24,17 @@ This document identifies implementation gaps between the current codebase (v0.2.
 
 ## 2. Predictive Warnings Not Integrated
 
-**Status**: Implemented but not wired
+**Status**: Done
 
 - **Spec Requirement (FR-004)**: "System MUST surface pre-push warnings when learned patterns indicate elevated probability of conflict or test failure."
 - **Current State**:
   - Pattern learning exists in `src/core/memory.ts` and `src/core/patternLearner.ts`
   - `LEARN_ACTIVATION_THRESHOLD = 10` correctly implemented per spec
-  - `getPredictiveWarnings()` function exists but is NOT called by the `push` command
+  - `getPredictiveWarnings()` is now called by the `push` command
 - **Affected Files**:
-  - `src/commands/push.ts` - Does not check learned patterns before pushing
-  - `src/core/patternLearner.ts` - Unused predictive warning capability
-- **Impact**: Users cannot receive learned warnings before pushing despite having the learning infrastructure
+  - `src/commands/push.ts` - Now calls `getPredictiveWarnings()` before push
+  - `src/core/patternLearner.ts` - Provides predictive warning capability
+- **Impact**: Users now receive learned warnings before pushing based on pattern history
 
 ---
 
@@ -114,7 +114,7 @@ This document identifies implementation gaps between the current codebase (v0.2.
 | Gap | Priority | Status |
 |-----|----------|--------|
 | Hosting Provider (GitLab/Bitbucket) | P2 | Missing |
-| Predictive Warnings Integration | P1 | Not Wired |
+| Predictive Warnings Integration | P1 | Done |
 | Queue --team Completeness | P2 | Partial |
 | Version Mismatch | Low | Done |
 | Output Contract Verification | Medium | Verify |
@@ -125,7 +125,7 @@ This document identifies implementation gaps between the current codebase (v0.2.
 
 ## Recommendations
 
-1. **High Priority**: Wire `getPredictiveWarnings()` into the `push` command to satisfy FR-004
+1. ~~**High Priority**: Wire `getPredictiveWarnings()` into the `push` command to satisfy FR-004~~ (Done)
 2. **High Priority**: Add GitLab/Bitbucket providers or document as GitHub-only for v1
 3. **Medium Priority**: Enhance `sg queue --team` with queue position, wait estimates, and risk hints
 4. ~~**Low Priority**: Fix CLI version mismatch~~ (Done)
