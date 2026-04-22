@@ -4,7 +4,7 @@ Generated: 2026-04-22
 
 ## Overview
 
-This document identifies implementation gaps between the current codebase (v0.2.4) and the specification requirements defined in `specs/002-indispensable-git-assistant/spec.md`.
+This document identifies implementation gaps between the current codebase (v0.2.5) and the specification requirements defined in `specs/002-indispensable-git-assistant/spec.md`.
 
 ---
 
@@ -61,7 +61,7 @@ This document identifies implementation gaps between the current codebase (v0.2.
 **Status**: Done
 
 - **Current State**:
-  - `package.json:3` declares version `"0.2.4"`
+  - `package.json:3` declares version `"0.2.5"`
   - `src/cli.ts` now reads version dynamically from `package.json` at runtime
 - **Solution**: Added `getVersion()` function that reads from `package.json` using synchronous fs read
 - **Impact**: Version now automatically stays in sync during build

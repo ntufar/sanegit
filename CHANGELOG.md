@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.5] - 2026-04-22
+
+### Added
+- `sg resolve` — AI-assisted merge conflict resolution
+
+### Changed
+- `sg push` now runs predictive risk assessment and surfaces learned pre-push warnings from pattern history before executing the push
+- `sg who` — richer ownership reporting
+- Error handling and test structure improvements for `sg time-travel` and resolver flows
+
+### Fixed
+- Test harnesses initialize bare repositories with `main` as the initial branch for consistent behavior
+
 ## [0.2.4] - 2026-04-21
 
 ### Fixed
@@ -184,6 +197,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Added `repository.url` to `package.json` to satisfy npm provenance validation
 
+[0.2.5]: https://github.com/ntufar/sanegit/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/ntufar/sanegit/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/ntufar/sanegit/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/ntufar/sanegit/compare/v0.2.1...v0.2.2
