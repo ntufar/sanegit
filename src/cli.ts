@@ -32,6 +32,7 @@ import { runBlameExplain } from "./commands/blame.js";
 import { runTimeTravel } from "./commands/time-travel.js";
 import { runPairHandoff, runPairStart, runPairStatus } from "./commands/pair.js";
 import { runDoctor } from "./commands/doctor.js";
+import { runResolve } from "./commands/resolve.js";
 
 const program = new Command();
 
@@ -279,6 +280,14 @@ program
   .description("Run deep repository health diagnostics")
   .action(async () => {
     await runDoctor();
+  });
+
+program
+  .command("resolve")
+  .description("AI-assisted merge conflict resolution")
+  .option("--file <path>", "Resolve conflicts in a specific file only")
+  .action(async (options: { file?: string }) => {
+    await runResolve(process.cwd(), { file: options.file });
   });
 
 program.parseAsync(process.argv).catch((error: unknown) => {

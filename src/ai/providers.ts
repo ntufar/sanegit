@@ -15,7 +15,15 @@ export interface AiProvider {
   summarizeChangeSet(input: string): Promise<string>;
   suggestCommitMessage(input: string): Promise<string>;
   diagnoseFailure?(input: string): Promise<string>;
+  resolveConflict?(input: string): Promise<string>;
 }
+
+const RESOLVE_CONFLICT_SYSTEM_PROMPT =
+  "You are a git merge conflict resolver. Analyze the conflict and produce a resolution that preserves intent from both sides where possible. " +
+  "Output in this exact format:\n\n" +
+  "RESOLUTION:\n```\n<resolved code with no conflict markers>\n```\n\n" +
+  "EXPLANATION: <1-2 sentences on why this resolution is correct>\n\n" +
+  "CONFIDENCE: high|medium|low";
 
 export interface AiContextPayload {
   command: string;
@@ -36,6 +44,10 @@ class FallbackProvider implements AiProvider {
 
   async diagnoseFailure(input: string): Promise<string> {
     return `Probable cause: ${input.slice(0, 120) || "insufficient data"}. Next step: inspect failing test output and rerun locally.`;
+  }
+
+  async resolveConflict(_input: string): Promise<string> {
+    return "RESOLUTION:\n```\n\n```\n\nEXPLANATION: AI not configured. Resolve conflicts manually by editing the file and removing conflict markers.\n\nCONFIDENCE: low";
   }
 }
 
@@ -65,7 +77,12 @@ class OpenAiCompatProvider implements AiProvider {
     this.model = PROVIDER_DEFAULT_MODELS[config.provider] ?? "mistral-small-latest";
   }
 
-  private async chat(systemPrompt: string, userContent: string): Promise<string> {
+  private async chat(
+    systemPrompt: string,
+    userContent: string,
+    maxTokens = 512,
+    temperature = 0.2,
+  ): Promise<string> {
     const res = await fetch(`${this.baseUrl}/chat/completions`, {
       method: "POST",
       headers: {
@@ -78,8 +95,8 @@ class OpenAiCompatProvider implements AiProvider {
           { role: "system", content: systemPrompt },
           { role: "user", content: userContent },
         ],
-        max_tokens: 512,
-        temperature: 0.2,
+        max_tokens: maxTokens,
+        temperature,
       }),
     });
     if (!res.ok) {
@@ -112,6 +129,10 @@ class OpenAiCompatProvider implements AiProvider {
       input,
     );
   }
+
+  async resolveConflict(input: string): Promise<string> {
+    return this.chat(RESOLVE_CONFLICT_SYSTEM_PROMPT, input, 2048, 0.1);
+  }
 }
 
 class AnthropicProvider implements AiProvider {
@@ -123,7 +144,11 @@ class AnthropicProvider implements AiProvider {
     this.model = PROVIDER_DEFAULT_MODELS["anthropic"]!;
   }
 
-  private async chat(systemPrompt: string, userContent: string): Promise<string> {
+  private async chat(
+    systemPrompt: string,
+    userContent: string,
+    maxTokens = 512,
+  ): Promise<string> {
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -133,7 +158,7 @@ class AnthropicProvider implements AiProvider {
       },
       body: JSON.stringify({
         model: this.model,
-        max_tokens: 512,
+        max_tokens: maxTokens,
         system: systemPrompt,
         messages: [{ role: "user", content: userContent }],
       }),
@@ -168,6 +193,10 @@ class AnthropicProvider implements AiProvider {
       input,
     );
   }
+
+  async resolveConflict(input: string): Promise<string> {
+    return this.chat(RESOLVE_CONFLICT_SYSTEM_PROMPT, input, 2048);
+  }
 }
 
 class GoogleProvider implements AiProvider {
@@ -179,14 +208,18 @@ class GoogleProvider implements AiProvider {
     this.model = PROVIDER_DEFAULT_MODELS["google"]!;
   }
 
-  private async generate(prompt: string): Promise<string> {
+  private async generate(
+    prompt: string,
+    maxOutputTokens = 512,
+    temperature = 0.2,
+  ): Promise<string> {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`;
     const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 512, temperature: 0.2 },
+        generationConfig: { maxOutputTokens, temperature },
       }),
     });
     if (!res.ok) {
@@ -214,6 +247,14 @@ class GoogleProvider implements AiProvider {
   async diagnoseFailure(input: string): Promise<string> {
     return this.generate(
       `Diagnose the following git or CI failure and suggest a concrete next step:\n\n${input}`,
+    );
+  }
+
+  async resolveConflict(input: string): Promise<string> {
+    return this.generate(
+      `${RESOLVE_CONFLICT_SYSTEM_PROMPT}\n\n${input}`,
+      2048,
+      0.1,
     );
   }
 }
