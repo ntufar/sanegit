@@ -4,717 +4,788 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="SaneGit (sg) — CLI that predicts git problems, suggests fixes, and explains everything in plain English. Node 22+.">
-    <title>SaneGit — Smart Git Command Assistant</title>
+    <meta name="theme-color" content="#0a0d12">
+    <meta property="og:title" content="SaneGit — Git, explained in plain words">
+    <meta property="og:description" content="A command-line assistant that predicts git problems, suggests safe fixes, and explains state in plain English. Binary: sg.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ntufar.github.io/sanegit/">
+    <meta name="twitter:card" content="summary">
+    <title>SaneGit — Git, explained in plain words</title>
     <link rel="canonical" href="https://ntufar.github.io/sanegit/">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a0d12'/%3E%3Cpath d='M10 22.5c-2.5 0-4-1.6-4-3.6 0-2.1 1.7-3.3 4.2-3.5l5.3-.5-.3-1.1c-.4-1.4-1.4-2.1-3-2.1-1.5 0-2.7.7-3.4 1.9l-2.5-1.4c1.1-2.1 3.1-3.2 5.9-3.2 3.3 0 5.5 1.7 6.1 4.5l1.7 7.9h-2.9l-.4-1.8c-.8 1.3-2.3 2-4.2 2.1l-2.5.8zm1.1-2.6c2 0 3.4-1 3.9-2.7l.5-2.2-3.9.4c-1.4.1-2.1.8-2.1 1.7 0 1 .7 1.6 1.9 1.6l-.3 1.2z' fill='%234cc38a'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg: #0a0d12;
+            --bg-soft: #0e1219;
+            --surface: #121823;
+            --surface-2: #161d2a;
+            --border: rgba(232, 237, 243, 0.09);
+            --border-strong: rgba(232, 237, 243, 0.16);
+            --text: #e8edf3;
+            --muted: #9aa6b4;
+            --faint: #67727f;
+            --accent: #4cc38a;
+            --accent-soft: rgba(76, 195, 138, 0.12);
+            --accent-ink: #06281b;
+            --amber: #d9a441;
+            --radius: 14px;
+            --radius-sm: 9px;
+            --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+            --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+            --max: 1180px;
+            --shadow-tint: 0 24px 60px -24px rgba(0, 0, 0, 0.7), 0 8px 28px -12px rgba(76, 195, 138, 0.12);
         }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; scroll-padding-top: 84px; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            color: #24292e;
-            background: #ffffff;
+            font-family: var(--font-body);
+            line-height: 1.65;
+            color: var(--text);
+            background: var(--bg);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
-
-        header {
-            background: #ffffff;
-            color: #24292e;
-            padding: 48px 20px 40px;
-            text-align: center;
-            border-bottom: 1px solid #e1e4e8;
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            pointer-events: none;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
         }
-
-        header h1 {
-            font-size: 2.5em;
-            margin-bottom: 12px;
+        ::selection { background: rgba(76, 195, 138, 0.32); color: #fff; }
+        a:focus-visible, button:focus-visible, input:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+            border-radius: 6px;
+        }
+        .skip-link {
+            position: absolute;
+            left: 16px;
+            top: -60px;
+            z-index: 100;
+            background: var(--accent);
+            color: var(--accent-ink);
             font-weight: 600;
+            font-size: 0.9rem;
+            padding: 10px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: top 0.2s;
         }
-
-        header .tagline {
-            font-size: 1.15em;
-            color: #586069;
-            max-width: 720px;
-            margin: 0 auto 16px;
-        }
-
-        .badge-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-            align-items: center;
-            margin-top: 8px;
-        }
-
-        .badge-row a img {
-            vertical-align: middle;
-        }
-
-        nav {
-            background: #fafbfc;
-            padding: 14px 16px;
-            text-align: center;
-            border-bottom: 1px solid #e1e4e8;
+        .skip-link:focus { top: 12px; }
+        .wrap { max-width: var(--max); margin: 0 auto; padding: 0 28px; }
+        /* ——— Navigation ——— */
+        .nav {
             position: sticky;
             top: 0;
-            z-index: 10;
+            z-index: 50;
+            background: rgba(10, 13, 18, 0.78);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
         }
-
-        nav a {
-            color: #0366d6;
-            text-decoration: none;
-            margin: 6px 12px;
-            font-weight: 500;
-            font-size: 0.95em;
-            display: inline-block;
-            transition: color 0.2s;
-        }
-
-        nav a:hover {
-            color: #0256c7;
-            text-decoration: underline;
-        }
-
-        .container {
-            max-width: 1000px;
+        .nav-inner {
+            max-width: var(--max);
             margin: 0 auto;
-            padding: 48px 20px 60px;
-        }
-
-        section {
-            margin-bottom: 64px;
-        }
-
-        h2 {
-            color: #24292e;
-            font-size: 1.65em;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .section-lead {
-            color: #586069;
-            font-size: 1.05em;
-            max-width: 760px;
-            margin-bottom: 24px;
-            line-height: 1.65;
-        }
-
-        h3 {
-            color: #24292e;
-            font-size: 1.05em;
-            font-weight: 600;
-            margin: 28px 0 14px;
-        }
-
-        h3:first-of-type {
-            margin-top: 0;
-        }
-
-        .command-group-label {
-            font-size: 0.8em;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: #6a737d;
-            margin: 32px 0 14px;
-            font-weight: 600;
-        }
-
-        .command-group-label:first-child {
-            margin-top: 0;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 22px;
-            margin-top: 24px;
-        }
-
-        .feature-card {
-            background: #ffffff;
-            padding: 22px;
-            border: 1px solid #e1e4e8;
-            border-radius: 8px;
-            transition: box-shadow 0.2s;
-        }
-
-        .feature-card:hover {
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .feature-card h3 {
-            color: #24292e;
-            margin: 0 0 10px;
-            font-size: 1.05em;
-        }
-
-        .feature-card p {
-            color: #586069;
-            font-size: 0.92em;
-            line-height: 1.55;
-        }
-
-        .feature-card code {
-            background: #f6f8fa;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 0.9em;
-        }
-
-        .code-block {
-            background: #f6f8fa;
-            color: #24292e;
-            padding: 16px 18px;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 14px 0;
-            font-family: ui-monospace, 'Monaco', 'Menlo', monospace;
-            font-size: 0.82em;
-            line-height: 1.55;
-            border: 1px solid #e1e4e8;
-        }
-
-        .code-label {
-            color: #6a737d;
-            font-size: 0.85em;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .command {
-            color: #005cc5;
-        }
-
-        .cta-button {
-            display: inline-block;
-            background: #0366d6;
-            color: white;
-            padding: 11px 22px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95em;
-            transition: background 0.2s;
-            margin: 8px 8px 8px 0;
-            border: 1px solid #0366d6;
-        }
-
-        .cta-button:hover {
-            background: #0256c7;
-            border-color: #0256c7;
-        }
-
-        .cta-button.secondary {
-            background: #ffffff;
-            color: #0366d6;
-            border: 1px solid #0366d6;
-        }
-
-        .cta-button.secondary:hover {
-            background: #f0f4f8;
-        }
-
-        .commands-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 14px;
-            margin-top: 8px;
-        }
-
-        .command-item {
-            background: #ffffff;
-            border: 1px solid #e1e4e8;
-            padding: 16px 18px;
-            border-radius: 8px;
-        }
-
-        .command-item code {
-            background: #f6f8fa;
-            padding: 3px 7px;
-            border-radius: 4px;
-            color: #005cc5;
-            font-family: ui-monospace, monospace;
-            font-weight: 600;
-            font-size: 0.88em;
-            word-break: break-word;
-        }
-
-        .command-item p {
-            color: #586069;
-            font-size: 0.88em;
-            margin-top: 8px;
-            line-height: 1.5;
-        }
-
-        .steps {
-            list-style: none;
-            counter-reset: step;
-            margin-top: 20px;
-        }
-
-        .steps li {
-            counter-increment: step;
-            position: relative;
-            padding-left: 48px;
-            margin-bottom: 18px;
-            color: #586069;
-            line-height: 1.55;
-        }
-
-        .steps li::before {
-            content: counter(step);
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 32px;
-            height: 32px;
-            background: #0366d6;
-            color: #fff;
-            border-radius: 50%;
-            font-size: 0.85em;
-            font-weight: 600;
+            padding: 0 28px;
+            height: 64px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 28px;
         }
-
-        .steps li strong {
-            color: #24292e;
+        .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); margin-right: auto; }
+        .brand-mark {
+            width: 30px; height: 30px; border-radius: 9px;
+            background: linear-gradient(135deg, #123626, #0a0d12 70%);
+            border: 1px solid rgba(76, 195, 138, 0.4);
+            display: grid; place-items: center;
+            font-family: var(--font-mono); font-weight: 600; font-size: 0.8rem; color: var(--accent);
         }
-
-        .two-col {
+        .brand-name { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 1.05rem; }
+        .brand-name span { color: var(--faint); font-weight: 500; font-family: var(--font-mono); font-size: 0.8rem; margin-left: 6px; }
+        .nav-links { display: flex; gap: 4px; align-items: center; }
+        .nav-links a {
+            color: var(--muted); text-decoration: none; font-size: 0.88rem; font-weight: 500;
+            padding: 8px 13px; border-radius: 8px; transition: color 0.2s, background 0.2s;
+        }
+        .nav-links a:hover { color: var(--text); background: rgba(232, 237, 243, 0.06); }
+        .nav-links a.active { color: var(--text); background: rgba(76, 195, 138, 0.13); }
+        .nav-cta {
+            font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent);
+            border: 1px solid rgba(76, 195, 138, 0.35); border-radius: 8px;
+            padding: 8px 14px; text-decoration: none; transition: background 0.2s, transform 0.15s;
+            white-space: nowrap;
+        }
+        .nav-cta:hover { background: var(--accent-soft); }
+        .nav-cta:active { transform: scale(0.97); }
+        /* ——— Hero ——— */
+        .hero {
+            position: relative;
+            padding: 96px 0 72px;
+            overflow: clip;
+        }
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: -20% -10% auto -10%;
+            height: 640px;
+            background:
+                radial-gradient(560px 320px at 22% 30%, rgba(76, 195, 138, 0.14), transparent 65%),
+                radial-gradient(640px 380px at 78% 20%, rgba(64, 120, 200, 0.12), transparent 65%);
+            pointer-events: none;
+        }
+        .hero-grid {
+            position: relative;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            margin-top: 16px;
+            grid-template-columns: 1.02fr 0.98fr;
+            gap: 56px;
+            align-items: center;
         }
-
-        .panel {
-            background: #f6f8fa;
-            border: 1px solid #e1e4e8;
-            border-radius: 8px;
-            padding: 20px;
+        .eyebrow {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: var(--font-mono); font-size: 0.76rem; font-weight: 500;
+            letter-spacing: 0.04em; color: var(--accent);
+            border: 1px solid rgba(76, 195, 138, 0.3);
+            background: rgba(76, 195, 138, 0.07);
+            padding: 6px 13px; border-radius: 999px;
+            margin-bottom: 22px;
         }
-
-        .panel h3 {
-            margin-top: 0;
-            font-size: 1em;
+        .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.6rem, 5.2vw, 4rem);
+            line-height: 1.04;
+            letter-spacing: -0.035em;
+            font-weight: 700;
+            text-wrap: balance;
+            margin-bottom: 20px;
         }
-
-        .panel ul {
-            margin-top: 10px;
-            padding-left: 20px;
-            color: #586069;
-            font-size: 0.92em;
+        .hero h1 em { font-style: normal; color: var(--accent); }
+        .hero .lede {
+            color: var(--muted);
+            font-size: 1.08rem;
+            line-height: 1.7;
+            max-width: 34rem;
+            text-wrap: pretty;
+            margin-bottom: 30px;
         }
-
-        .panel li {
-            margin-bottom: 6px;
+        .hero .lede code { font-family: var(--font-mono); font-size: 0.86em; color: var(--text); background: rgba(232,237,243,0.08); padding: 2px 7px; border-radius: 5px; }
+        .hero-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: 30px; }
+        .btn {
+            display: inline-flex; align-items: center; gap: 9px;
+            background: var(--accent); color: var(--accent-ink);
+            font-weight: 600; font-size: 0.95rem; text-decoration: none;
+            padding: 13px 24px; border-radius: 10px; border: 1px solid var(--accent);
+            transition: transform 0.15s, box-shadow 0.25s, background 0.2s;
+            box-shadow: 0 10px 30px -10px rgba(76, 195, 138, 0.5);
         }
-
-        footer {
-            background: #24292e;
-            color: #ffffff;
-            padding: 36px 20px;
-            text-align: center;
-            border-top: 1px solid #e1e4e8;
+        .btn:hover { background: #5fd598; box-shadow: 0 14px 36px -10px rgba(76, 195, 138, 0.6); transform: translateY(-1px); }
+        .btn:active { transform: scale(0.98) translateY(1px); }
+        .link-quiet { color: var(--muted); font-size: 0.94rem; font-weight: 500; text-decoration: none; border-bottom: 1px solid var(--border-strong); padding-bottom: 2px; transition: color 0.2s; }
+        .link-quiet:hover { color: var(--text); }
+        .hero-meta { display: flex; gap: 22px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 0.78rem; color: var(--faint); font-variant-numeric: tabular-nums; }
+        .hero-meta b { color: var(--muted); font-weight: 500; }
+        /* ——— Terminal ——— */
+        .terminal {
+            background: linear-gradient(180deg, var(--surface-2), var(--surface));
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-tint);
+            overflow: hidden;
+            position: relative;
         }
-
-        footer a {
-            color: #79b8ff;
-            text-decoration: none;
+        .terminal::after {
+            content: "";
+            position: absolute; inset: 0;
+            border-radius: inherit;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            pointer-events: none;
         }
-
-        footer a:hover {
-            text-decoration: underline;
+        .term-bar { display: flex; align-items: center; gap: 8px; padding: 13px 16px; border-bottom: 1px solid var(--border); }
+        .term-bar i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+        .term-bar i:nth-child(1) { background: #e0655a; }
+        .term-bar i:nth-child(2) { background: var(--amber); }
+        .term-bar i:nth-child(3) { background: var(--accent); }
+        .term-bar span { margin-left: auto; font-family: var(--font-mono); font-size: 0.72rem; color: var(--faint); }
+        .term-body { padding: 20px 20px 22px; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.75; }
+        .term-body .p { color: var(--accent); }
+        .term-body .c { color: var(--faint); }
+        .term-body .out { color: var(--muted); }
+        .term-body .k { color: #8ab8ff; }
+        .term-body .ok { color: var(--accent); font-weight: 600; }
+        .term-cursor { display: inline-block; width: 8px; height: 15px; background: var(--accent); vertical-align: -2px; animation: blink 1.2s steps(1) infinite; border-radius: 1px; }
+        @keyframes blink { 50% { opacity: 0; } }
+        .float-chip {
+            position: absolute; z-index: 2;
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(18, 24, 35, 0.92);
+            border: 1px solid var(--border-strong);
+            border-radius: 999px;
+            font-family: var(--font-mono); font-size: 0.74rem; color: var(--text);
+            padding: 8px 14px 8px 10px;
+            box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
         }
-
-        footer p {
-            margin-bottom: 8px;
-            color: #d1d5da;
-            font-size: 0.95em;
+        .float-chip .pill { background: var(--accent-soft); color: var(--accent); border: 1px solid rgba(76,195,138,0.35); border-radius: 999px; padding: 1px 9px; font-weight: 600; }
+        .chip-a { top: 22%; right: -18px; transform: rotate(2deg); }
+        .chip-b { bottom: 12%; left: -22px; transform: rotate(-2deg); }
+        .chip-b .pill { background: rgba(217,164,65,0.13); color: var(--amber); border-color: rgba(217,164,65,0.4); }
+        /* ——— Sections ——— */
+        main section { padding: 72px 0 8px; }
+        .sec-head { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 34px; max-width: 46rem; }
+        .sec-index { font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent); letter-spacing: 0.06em; }
+        .sec-head h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.7rem, 3vw, 2.3rem);
+            letter-spacing: -0.028em; line-height: 1.1; font-weight: 700;
+            text-wrap: balance;
         }
-
-        .info-box {
-            background: #f6f8fa;
-            padding: 18px 20px;
-            border-radius: 8px;
-            border-left: 4px solid #0366d6;
-            margin-top: 20px;
+        .sec-head p { color: var(--muted); font-size: 1.02rem; max-width: 38rem; text-wrap: pretty; }
+        .sec-head p code, .cmd-item p code { font-family: var(--font-mono); font-size: 0.85em; color: var(--text); background: rgba(232,237,243,0.08); padding: 1px 6px; border-radius: 5px; }
+        /* ——— Bento features ——— */
+        .bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+        .b-card {
+            position: relative;
+            grid-column: span 4;
+            background: linear-gradient(180deg, var(--surface-2), var(--surface));
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 26px 24px 24px;
+            overflow: hidden;
+            transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
         }
-
-        .info-box.warn {
-            border-left-color: #d4880c;
+        .b-card::before {
+            content: "";
+            position: absolute; inset: 0;
+            background: radial-gradient(320px 200px at var(--mx, 50%) var(--my, 0%), rgba(76, 195, 138, 0.13), transparent 65%);
+            opacity: 0; transition: opacity 0.25s;
+            pointer-events: none;
         }
-
-        .info-box h3 {
-            color: #0366d6;
-            margin-bottom: 8px;
-            font-size: 1em;
+        .b-card:hover { border-color: var(--border-strong); transform: translateY(-2px); box-shadow: var(--shadow-tint); }
+        .b-card:hover::before { opacity: 1; }
+        .b-card.wide { grid-column: span 8; }
+        .b-card.half { grid-column: span 6; }
+        .b-icon {
+            width: 38px; height: 38px; border-radius: 11px;
+            display: grid; place-items: center;
+            background: var(--accent-soft);
+            border: 1px solid rgba(76, 195, 138, 0.3);
+            margin-bottom: 16px;
         }
-
-        .info-box.warn h3 {
-            color: #b08800;
+        .b-icon svg { width: 19px; height: 19px; stroke: var(--accent); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+        .b-card h3 { font-family: var(--font-display); font-size: 1.06rem; font-weight: 600; letter-spacing: -0.015em; margin-bottom: 8px; }
+        .b-card p { color: var(--muted); font-size: 0.92rem; line-height: 1.6; }
+        .b-card p code { font-family: var(--font-mono); font-size: 0.83em; color: var(--accent); background: rgba(76,195,138,0.09); padding: 1px 6px; border-radius: 5px; }
+        .b-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
+        .b-tags span { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); border: 1px solid var(--border); padding: 3px 10px; border-radius: 999px; }
+        /* ——— Commands ——— */
+        .cmd-tools { display: flex; gap: 12px; align-items: center; margin-bottom: 26px; flex-wrap: wrap; }
+        .cmd-filter {
+            flex: 1 1 260px; max-width: 420px;
+            background: var(--surface); border: 1px solid var(--border-strong);
+            color: var(--text); border-radius: 10px; padding: 11px 15px 11px 40px;
+            font-family: var(--font-mono); font-size: 0.86rem;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2367727f' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: 13px center;
         }
-
-        .info-box p {
-            color: #586069;
-            line-height: 1.6;
-            font-size: 0.92em;
+        .cmd-filter::placeholder { color: var(--faint); }
+        .cmd-count { font-family: var(--font-mono); font-size: 0.78rem; color: var(--faint); font-variant-numeric: tabular-nums; }
+        .cmd-group { display: grid; grid-template-columns: 210px 1fr; gap: 26px; padding: 24px 0; border-top: 1px solid var(--border); }
+        .cmd-label { font-family: var(--font-mono); font-size: 0.76rem; color: var(--accent); letter-spacing: 0.05em; padding-top: 14px; }
+        .cmd-label small { display: block; color: var(--faint); margin-top: 6px; letter-spacing: 0; line-height: 1.55; font-size: 0.75rem; }
+        .cmd-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+        .cmd-item {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); padding: 15px 16px;
+            transition: border-color 0.2s, transform 0.2s, background 0.2s;
         }
-
-        .output-sample {
-            font-family: ui-monospace, monospace;
-            font-size: 0.8em;
-            color: #24292e;
-            background: #fff;
-            border: 1px solid #e1e4e8;
-            border-radius: 6px;
-            padding: 14px 16px;
-            margin-top: 12px;
-            line-height: 1.5;
+        .cmd-item:hover { border-color: rgba(76, 195, 138, 0.4); transform: translateY(-1px); background: var(--surface-2); }
+        .cmd-item:active { transform: scale(0.99); }
+        .cmd-item code { font-family: var(--font-mono); font-size: 0.82rem; font-weight: 600; color: var(--text); word-break: break-word; }
+        .cmd-item code .p { color: var(--accent); font-weight: 400; }
+        .cmd-item p { color: var(--muted); font-size: 0.86rem; margin-top: 7px; line-height: 1.55; }
+        .cmd-item.hidden { display: none; }
+        /* ——— Workflow ——— */
+        .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; position: relative; }
+        .flow::before { content: ""; position: absolute; top: 27px; left: 6%; right: 6%; height: 1px; background: linear-gradient(90deg, transparent, rgba(76,195,138,0.4), rgba(76,195,138,0.4), transparent); }
+        .flow-step { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px 16px; transition: border-color 0.2s, transform 0.2s; }
+        .flow-step:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+        .flow-n { position: relative; z-index: 1; width: 30px; height: 30px; border-radius: 50%; background: var(--bg); border: 1px solid rgba(76,195,138,0.45); color: var(--accent); font-family: var(--font-mono); font-size: 0.76rem; font-weight: 600; display: grid; place-items: center; margin-bottom: 14px; }
+        .flow-step h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; letter-spacing: -0.01em; }
+        .flow-step p { color: var(--muted); font-size: 0.84rem; line-height: 1.6; }
+        .flow-step p code { font-family: var(--font-mono); font-size: 0.85em; color: var(--accent); }
+        /* ——— Panels, code, callouts ——— */
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px; }
+        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+        .panel h3 { font-family: var(--font-display); font-size: 1rem; font-weight: 600; margin-bottom: 12px; letter-spacing: -0.01em; }
+        .panel ul { padding-left: 20px; color: var(--muted); font-size: 0.92rem; }
+        .panel li { margin-bottom: 7px; }
+        .panel li::marker { color: var(--accent); }
+        .panel p { color: var(--muted); font-size: 0.92rem; line-height: 1.6; }
+        .panel a { color: var(--accent); }
+        .code-block {
+            position: relative;
+            background: #07090d;
+            border: 1px solid var(--border-strong);
+            color: #cfd8e3;
+            padding: 16px 18px;
+            border-radius: var(--radius-sm);
+            overflow-x: auto;
+            margin: 12px 0;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.8;
         }
-
-        .output-sample .k {
-            color: #6f42c1;
+        .code-block .c { color: #5b6675; }
+        .code-block .p { color: var(--accent); }
+        .code-label { display: block; color: var(--faint); font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; font-family: var(--font-mono); }
+        .copy-btn {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(232,237,243,0.07); color: var(--muted);
+            border: 1px solid var(--border); border-radius: 7px;
+            font-family: var(--font-mono); font-size: 0.7rem;
+            padding: 5px 11px; cursor: pointer;
+            transition: color 0.2s, background 0.2s, transform 0.15s;
         }
-
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.75em;
-            }
-
-            header .tagline {
-                font-size: 1em;
-            }
-
-            nav a {
-                margin: 4px 8px;
-            }
-
-            .feature-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .commands-grid {
-                grid-template-columns: 1fr;
-            }
+        .copy-btn:hover { color: var(--text); background: rgba(232,237,243,0.13); }
+        .copy-btn:active { transform: scale(0.96); }
+        .callout {
+            display: flex; gap: 14px; align-items: flex-start;
+            background: rgba(76, 195, 138, 0.06);
+            border: 1px solid rgba(76, 195, 138, 0.25);
+            padding: 18px 20px; border-radius: var(--radius-sm);
+            margin-top: 18px;
         }
+        .callout.warn { background: rgba(217, 164, 65, 0.06); border-color: rgba(217, 164, 65, 0.3); }
+        .callout .ic { flex: none; width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: var(--accent-soft); border: 1px solid rgba(76,195,138,0.3); font-family: var(--font-mono); color: var(--accent); font-size: 0.8rem; font-weight: 600; }
+        .callout.warn .ic { background: rgba(217,164,65,0.12); border-color: rgba(217,164,65,0.35); color: var(--amber); }
+        .callout h3 { font-size: 0.94rem; font-weight: 600; margin-bottom: 4px; }
+        .callout p { color: var(--muted); font-size: 0.89rem; line-height: 1.6; }
+        .callout p code { font-family: var(--font-mono); font-size: 0.85em; color: var(--text); }
+        .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .quick-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+        .quick-card h3 { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 500; color: var(--accent); letter-spacing: 0.04em; margin-bottom: 10px; }
+        .res-cta { display: flex; gap: 12px; flex-wrap: wrap; margin: 8px 0 20px; }
+        .btn-ghost {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: var(--text); text-decoration: none; font-weight: 500; font-size: 0.92rem;
+            border: 1px solid var(--border-strong); border-radius: 10px; padding: 12px 20px;
+            transition: border-color 0.2s, background 0.2s, transform 0.15s;
+        }
+        .btn-ghost:hover { border-color: rgba(76,195,138,0.45); background: rgba(76,195,138,0.06); transform: translateY(-1px); }
+        .btn-ghost:active { transform: scale(0.98); }
+        footer { border-top: 1px solid var(--border); margin-top: 88px; padding: 40px 0 48px; }
+        .foot { display: flex; gap: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+        .foot p { color: var(--faint); font-size: 0.86rem; }
+        .foot a { color: var(--muted); text-decoration: none; font-size: 0.86rem; margin-left: 18px; transition: color 0.2s; }
+        .foot a:hover { color: var(--text); }
+        .ribbon {
+            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+            background: var(--bg-soft);
+            overflow: hidden; white-space: nowrap; padding: 12px 0;
+            margin-top: 64px;
+        }
+        .ribbon-track { display: inline-flex; gap: 34px; font-family: var(--font-mono); font-size: 0.78rem; color: var(--faint); animation: slide 36s linear infinite; padding-left: 34px; }
+        .ribbon-track b { color: var(--accent); font-weight: 500; }
+        @keyframes slide { to { transform: translateX(-50%); } }
+        .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+        .reveal.in { opacity: 1; transform: none; }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            .reveal { opacity: 1; transform: none; transition: none; }
+            .ribbon-track, .term-cursor { animation: none; }
+            * { transition-duration: 0.01ms !important; }
+        }
+        @media (max-width: 960px) {
+            .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+            .hero { padding: 64px 0 56px; }
+            .chip-a { right: 6px; }
+            .chip-b { left: 6px; }
+            .b-card, .b-card.wide, .b-card.half { grid-column: span 12; }
+            .flow { grid-template-columns: 1fr 1fr; }
+            .flow::before { display: none; }
+            .two-col, .quick-grid { grid-template-columns: 1fr; }
+            .cmd-group { grid-template-columns: 1fr; gap: 12px; }
+            .nav-links { display: none; }
+        }
+        @media (max-width: 560px) { .flow { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <header>
-        <h1>SaneGit</h1>
-        <p class="tagline">A command-line assistant that makes git usable: predict problems, suggest safe fixes, and explain what is going on in plain English. Binary: <code>sg</code>.</p>
-        <div class="badge-row">
-            <a href="https://www.npmjs.com/package/sanegit" title="npm package"><img src="https://img.shields.io/npm/v/sanegit.svg" alt="npm version" height="20"></a>
-            <a href="https://www.npmjs.com/package/sanegit" title="Monthly downloads"><img src="https://img.shields.io/npm/dm/sanegit.svg" alt="npm downloads" height="20"></a>
-            <img src="https://img.shields.io/badge/node-%3E%3D22-339933?logo=node.js&logoColor=white" alt="Requires Node.js 22 or newer" height="20">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <nav class="nav" aria-label="Primary">
+        <div class="nav-inner">
+            <a class="brand" href="#top" aria-label="SaneGit home">
+                <span class="brand-mark" aria-hidden="true">sg</span>
+                <span class="brand-name">SaneGit<span>v0.2.5</span></span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="#features">Features</a>
+                <a href="#commands">Commands</a>
+                <a href="#workflow">Workflow</a>
+                <a href="#install">Install</a>
+                <a href="#quickstart">Quick start</a>
+            </div>
+            <a class="nav-cta" href="#install">npm i -g sanegit</a>
+        </div>
+    </nav>
+
+    <header class="hero" id="top">
+        <div class="wrap hero-grid">
+            <div>
+                <span class="eyebrow"><span class="dot" aria-hidden="true"></span>CLI assistant for git · binary <code style="font: inherit;">sg</code></span>
+                <h1>Git, explained in <em>plain words.</em></h1>
+                <p class="lede">SaneGit predicts problems before you push, suggests safe fixes, and tells you what is going on. No cryptic porcelain. No guesswork. Just <code>sg status</code> and a clear next step.</p>
+                <div class="hero-actions">
+                    <a class="btn" href="#install">Install SaneGit
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    </a>
+                    <a class="link-quiet" href="#commands">Browse 19 commands</a>
+                </div>
+                <div class="hero-meta" aria-label="Project facts">
+                    <span><b>npm</b> sanegit</span>
+                    <span><b>node</b> ≥22</span>
+                    <span><b>license</b> MIT</span>
+                    <span><b>output</b> summary · risk · action</span>
+                </div>
+            </div>
+            <div style="position: relative;">
+                <div class="terminal" role="img" aria-label="Example terminal session showing sg status output with summary, risk, and recommendation">
+                    <div class="term-bar" aria-hidden="true"><i></i><i></i><i></i><span>~/my-repo — zsh</span></div>
+                    <div class="term-body">
+                        <div><span class="p">$</span> sg status</div>
+                        <div class="out"><span class="k">Summary:</span> 2 files staged · branch even with origin/main</div>
+                        <div class="out"><span class="k">Risk:</span> <span class="ok">low</span> — no divergence, no conflicts</div>
+                        <div class="out"><span class="k">Action:</span> review the diff, then commit or push</div>
+                        <div class="c">—</div>
+                        <div><span class="p">$</span> sg push <span class="c">--dry-run</span></div>
+                        <div class="out"><span class="ok">✓</span> safe to publish · 0 commits behind · CI green</div>
+                        <div><span class="p">$</span> <span class="term-cursor" aria-hidden="true"></span></div>
+                    </div>
+                </div>
+                <span class="float-chip chip-a"><span class="pill">Risk: low</span> pre-push check</span>
+                <span class="float-chip chip-b"><span class="pill">! blocked</span> force-push refused</span>
+            </div>
         </div>
     </header>
 
-    <nav>
-        <a href="#features">Features</a>
-        <a href="#commands">Commands</a>
-        <a href="#workflow">Workflow</a>
-        <a href="#install">Install</a>
-        <a href="#configuration">Configuration</a>
-        <a href="#quickstart">Quick start</a>
-        <a href="#resources">Resources</a>
-    </nav>
+    <div class="ribbon" aria-hidden="true">
+        <div class="ribbon-track" id="ribbonTrack">
+            <span><b>sg status</b> orient</span><span><b>sg explain</b> understand</span><span><b>sg commit</b> commit</span><span><b>sg push</b> publish safely</span><span><b>sg fix</b> recover</span><span><b>sg wtf</b> diagnose</span><span><b>sg ship</b> deliver</span><span><b>sg undo</b> roll back</span>
+        </div>
+    </div>
 
-    <div class="container">
-        <section id="features">
-            <h2>Features</h2>
-            <p class="section-lead">Every command prints the same four-part structure—summary, risk, recommendation, and optional detail—so you can scan output quickly or pipe it to tooling.</p>
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <h3>Repository health</h3>
-                    <p><code>sg status</code> summarizes branch position, working tree, and what to do next without reading raw git porcelain.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Smart commits (AI)</h3>
-                    <p><code>sg commit</code> builds a commit plan from staged changes and asks before writing. Requires a configured provider.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Change explanation (AI)</h3>
-                    <p><code>sg explain</code> turns diffs into plain-language intent and next steps. Requires a configured provider.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Safe pushes</h3>
-                    <p><code>sg push</code> evaluates divergence, conflicts, and hosted signals before you publish.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Merge readiness</h3>
-                    <p><code>sg check</code> scores integration risk against your target branch—not generic “commit linting.”</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Guided recovery</h3>
-                    <p><code>sg fix</code> walks common failure modes (conflicts, detached HEAD, interrupted rebase) with safe, confirmable steps.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Panic diagnostics</h3>
-                    <p><code>sg wtf</code> runs urgent checks. Add <code>--learn</code> to record fault signals or <code>--fix-ci</code> for CI-focused remediation hints.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Delivery &amp; history</h3>
-                    <p><code>sg sync</code>, <code>sg ship</code> / <code>sg ship --status</code>, <code>sg split</code>, and <code>sg time-travel --to …</code> cover sync, ship pipelines, splitting commits, and safe navigation—including natural-language refs.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Team &amp; ownership</h3>
-                    <p><code>sg who</code> (optional <code>--file</code> for a file or directory), <code>sg queue --team</code>, and <code>sg blame --file … --line … --explain</code> add hosted and local context.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Deep checks</h3>
-                    <p><code>sg doctor</code> reports repository health signals; <code>sg pair --action …</code> supports lightweight pair handoffs.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Provider choice</h3>
-                    <p>OpenAI, Anthropic, Google (Gemini), Mistral, or a custom HTTP endpoint via <code>sg ai-configure</code> (use <code>--url</code> for custom bases).</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Degraded mode</h3>
-                    <p>When AI is missing or unreachable, commands that do not strictly need a model fall back to deterministic rules. AI-only commands exit with a clear message.</p>
-                </div>
+    <main id="main">
+    <div class="wrap">
+        <section id="features" aria-labelledby="features-h">
+            <div class="sec-head reveal">
+                <span class="sec-index">01 — Features</span>
+                <h2 id="features-h">One output shape. Zero surprises.</h2>
+                <p>Every command prints the same four parts — summary, risk, recommendation, detail — so you can scan fast or pipe it to tooling.</p>
+            </div>
+            <div class="bento">
+                <article class="b-card wide reveal">
+                    <div class="b-icon"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
+                    <h3>Know where you stand</h3>
+                    <p><code>sg status</code> turns branch position, working tree, and next actions into plain language. <code>sg doctor</code> goes deeper and reports object, HEAD, and tree health signals.</p>
+                    <div class="b-tags"><span>sg status</span><span>sg doctor</span><span>sg check</span></div>
+                </article>
+                <article class="b-card reveal">
+                    <div class="b-icon"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg></div>
+                    <h3>AI help, only where it pays</h3>
+                    <p><code>sg explain</code> turns diffs into intent. <code>sg commit</code> drafts the message and asks before it writes. OpenAI, Anthropic, Gemini, Mistral, or your own endpoint.</p>
+                    <div class="b-tags"><span>sg explain</span><span>sg commit</span></div>
+                </article>
+                <article class="b-card reveal">
+                    <div class="b-icon"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+                    <h3>Push without fear</h3>
+                    <p><code>sg push</code> checks divergence, conflicts, and hosted signals first. <code>sg check</code> scores merge risk against your target branch.</p>
+                    <div class="b-tags"><span>sg push</span><span>sg check</span></div>
+                </article>
+                <article class="b-card reveal">
+                    <div class="b-icon"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg></div>
+                    <h3>Recover with a guide</h3>
+                    <p><code>sg fix</code> walks conflicts, detached HEAD, and stalled rebases step by step. <code>sg wtf</code> triages first — add <code>--learn</code> or <code>--fix-ci</code> when you need them.</p>
+                    <div class="b-tags"><span>sg fix</span><span>sg wtf</span><span>sg undo</span></div>
+                </article>
+                <article class="b-card reveal">
+                    <div class="b-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+                    <h3>Ship and reshape history</h3>
+                    <p><code>sg sync</code> preserves local work while you update. <code>sg ship</code> runs delivery end to end, <code>sg split</code> groups staged changes, <code>sg time-travel</code> resolves refs — plain words included.</p>
+                    <div class="b-tags"><span>sg sync</span><span>sg ship</span><span>sg split</span></div>
+                </article>
+                <article class="b-card half reveal">
+                    <div class="b-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c.6-3.4 2.8-5 5.5-5s4.9 1.6 5.5 5M16 4.5a3.2 3.2 0 0 1 0 7M17.5 15.2c1.7.7 2.7 2.3 3 4.8"/></svg></div>
+                    <h3>Team context, hosted context</h3>
+                    <p><code>sg who</code>, <code>sg queue --team</code>, and <code>sg blame --explain</code> pair local ownership with GitHub signals when <code>gh</code> is present. <code>sg pair</code> keeps handoffs short.</p>
+                    <div class="b-tags"><span>sg who</span><span>sg queue</span><span>sg blame</span></div>
+                </article>
+                <article class="b-card half reveal">
+                    <div class="b-icon"><svg viewBox="0 0 24 24"><path d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7z"/><path d="M9.5 12l2 2 3.5-4"/></svg></div>
+                    <h3>Works with no AI at all</h3>
+                    <p>Rule-based fallbacks carry every command that does not strictly need a model. AI-only commands exit with a clear message instead of a guess.</p>
+                    <div class="b-tags"><span>offline-safe</span><span>sg ai-configure</span></div>
+                </article>
             </div>
         </section>
 
-        <section id="commands">
-            <h2>Commands</h2>
-            <p class="section-lead">Install the <code>sanegit</code> package globally; invoke everything as <code>sg &lt;command&gt;</code>.</p>
-
-            <p class="command-group-label">Core loop</p>
-            <div class="commands-grid">
-                <div class="command-item">
-                    <code>sg status</code>
-                    <p>Plain-English repository state and recommended next action.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg explain</code>
-                    <p>Explain current changes (requires AI).</p>
-                </div>
-                <div class="command-item">
-                    <code>sg commit</code>
-                    <p>Proposed commit from staged files; confirms before <code>git commit</code> (requires AI).</p>
-                </div>
-                <div class="command-item">
-                    <code>sg push</code>
-                    <p>Pre-push risk checks and safer publish flow.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg check</code>
-                    <p>Merge and integration readiness vs. a target branch.</p>
+        <section id="commands" aria-labelledby="commands-h">
+            <div class="sec-head reveal">
+                <span class="sec-index">02 — Commands</span>
+                <h2 id="commands-h">Nineteen commands. One binary.</h2>
+                <p>Install the <code>sanegit</code> package globally, then run everything as <code>sg &lt;command&gt;</code>. Type to filter.</p>
+            </div>
+            <div class="cmd-tools reveal">
+                <input class="cmd-filter" id="cmdFilter" type="search" placeholder="Filter commands — try “push” or “history”…" aria-label="Filter commands">
+                <span class="cmd-count" id="cmdCount" aria-live="polite"></span>
+            </div>
+            <div id="cmdGroups">
+            <div class="cmd-group reveal">
+                <div class="cmd-label">CORE LOOP<small>Daily state, change review, and publish checks.</small></div>
+                <div class="cmd-list">
+                    <div class="cmd-item" data-keys="status state health next action orient"><code><span class="p">sg</span> status</code><p>Plain-English repository state and recommended next action.</p></div>
+                    <div class="cmd-item" data-keys="explain ai diff intent changes"><code><span class="p">sg</span> explain</code><p>Explain current changes (requires AI).</p></div>
+                    <div class="cmd-item" data-keys="commit ai staged message guided"><code><span class="p">sg</span> commit</code><p>Proposed commit from staged files; confirms before <code>git commit</code> (requires AI).</p></div>
+                    <div class="cmd-item" data-keys="push publish risk safe pre-push"><code><span class="p">sg</span> push</code><p>Pre-push risk checks and safer publish flow.</p></div>
+                    <div class="cmd-item" data-keys="check merge readiness target integration risk"><code><span class="p">sg</span> check</code><p>Merge and integration readiness vs. a target branch.</p></div>
                 </div>
             </div>
-
-            <p class="command-group-label">Recovery &amp; undo</p>
-            <div class="commands-grid">
-                <div class="command-item">
-                    <code>sg fix</code>
-                    <p>Guided recovery from common broken git states.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg undo</code>
-                    <p>List reversible rollbacks with explicit consequences.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg wtf</code>
-                    <p>Urgent diagnosis; <code>--learn</code>, <code>--fix-ci</code>.</p>
+            <div class="cmd-group reveal">
+                <div class="cmd-label">RECOVERY<small>Broken states, rollbacks, and urgent triage.</small></div>
+                <div class="cmd-list">
+                    <div class="cmd-item" data-keys="fix recovery conflicts detached rebase broken"><code><span class="p">sg</span> fix</code><p>Guided recovery from common broken git states.</p></div>
+                    <div class="cmd-item" data-keys="undo rollback revert consequences"><code><span class="p">sg</span> undo</code><p>List reversible rollbacks with explicit consequences.</p></div>
+                    <div class="cmd-item" data-keys="wtf diagnose panic learn fix-ci urgent"><code><span class="p">sg</span> wtf</code><p>Urgent diagnosis; <code>--learn</code>, <code>--fix-ci</code>.</p></div>
                 </div>
             </div>
-
-            <p class="command-group-label">Sync, ship, split</p>
-            <div class="commands-grid">
-                <div class="command-item">
-                    <code>sg sync</code>
-                    <p>Preserve local work while updating from mainline.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg ship</code>
-                    <p>One-command delivery; use <code>sg ship --status</code> for workflow state.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg split</code>
-                    <p>Propose logical commit groups from staged changes.</p>
+            <div class="cmd-group reveal">
+                <div class="cmd-label">SHIP<small>Sync, deliver, split, and move through history.</small></div>
+                <div class="cmd-list">
+                    <div class="cmd-item" data-keys="sync mainline update preserve local"><code><span class="p">sg</span> sync</code><p>Preserve local work while updating from mainline.</p></div>
+                    <div class="cmd-item" data-keys="ship delivery pipeline status workflow"><code><span class="p">sg</span> ship</code><p>One-command delivery; use <code>sg ship --status</code> for workflow state.</p></div>
+                    <div class="cmd-item" data-keys="split staged groups logical commits"><code><span class="p">sg</span> split</code><p>Propose logical commit groups from staged changes.</p></div>
+                    <div class="cmd-item" data-keys="time-travel history refs natural language resolve"><code><span class="p">sg</span> time-travel --to &lt;ref&gt;</code><p>Resolve revisions safely, including natural-language references.</p></div>
                 </div>
             </div>
-
-            <p class="command-group-label">Team, hosting, history</p>
-            <div class="commands-grid">
-                <div class="command-item">
-                    <code>sg who [--file &lt;path&gt;]</code>
-                    <p>Ownership and collaborator context; path may be a file or directory.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg queue --team</code>
-                    <p>Merge queue visibility and risk hints.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg blame --file &lt;path&gt; --line &lt;n&gt; --explain</code>
-                    <p>Line history with rationale (hosted context when available).</p>
-                </div>
-                <div class="command-item">
-                    <code>sg time-travel --to &lt;ref&gt;</code>
-                    <p>Resolve revisions safely, including natural-language references.</p>
-                </div>
-                <div class="command-item">
-                    <code>sg pair --action &lt;start|status|handoff&gt;</code>
-                    <p>Pair sessions; use <code>--session</code> with status and handoff.</p>
+            <div class="cmd-group reveal">
+                <div class="cmd-label">TEAM + HOSTING<small>Ownership, queue, blame, and pair work.</small></div>
+                <div class="cmd-list">
+                    <div class="cmd-item" data-keys="who ownership collaborators file team"><code><span class="p">sg</span> who [--file &lt;path&gt;]</code><p>Ownership and collaborator context; path may be a file or directory.</p></div>
+                    <div class="cmd-item" data-keys="queue team merge risk"><code><span class="p">sg</span> queue --team</code><p>Merge queue visibility and risk hints.</p></div>
+                    <div class="cmd-item" data-keys="blame line history explain hosted rationale"><code><span class="p">sg</span> blame --file &lt;path&gt; --line &lt;n&gt; --explain</code><p>Line history with rationale (hosted context when available).</p></div>
+                    <div class="cmd-item" data-keys="pair session start status handoff collaborate"><code><span class="p">sg</span> pair --action &lt;start|status|handoff&gt;</code><p>Pair sessions; use <code>--session</code> with status and handoff.</p></div>
                 </div>
             </div>
-
-            <p class="command-group-label">Diagnostics &amp; AI setup</p>
-            <div class="commands-grid">
-                <div class="command-item">
-                    <code>sg doctor</code>
-                    <p>Deep repository health signals (HEAD, objects, working tree, etc.).</p>
-                </div>
-                <div class="command-item">
-                    <code>sg ai-configure</code>
-                    <p>Set provider, <code>--credential-ref</code>, optional <code>--url</code> for custom APIs.</p>
+            <div class="cmd-group reveal">
+                <div class="cmd-label">SETUP<small>Health signals and provider setup.</small></div>
+                <div class="cmd-list">
+                    <div class="cmd-item" data-keys="doctor health diagnostics head objects tree"><code><span class="p">sg</span> doctor</code><p>Deep repository health signals (HEAD, objects, working tree, etc.).</p></div>
+                    <div class="cmd-item" data-keys="ai-configure provider openai anthropic gemini mistral custom credentials"><code><span class="p">sg</span> ai-configure</code><p>Set provider, <code>--credential-ref</code>, optional <code>--url</code> for custom APIs.</p></div>
+                    <div class="cmd-item" data-keys="resolve conflicts merge assistant"><code><span class="p">sg</span> resolve</code><p>Structured conflict triage with safe, confirmable steps.</p></div>
                 </div>
             </div>
-
-            <div class="output-sample" aria-label="Example structured output">
-                <span class="k">Summary:</span> 2 files staged; branch even with origin/main.<br>
-                <span class="k">Risk:</span> low<br>
-                <span class="k">Recommendation:</span> Review diff, then commit or push when ready.<br>
-                <span class="k">Detail:</span> …
             </div>
         </section>
 
-        <section id="workflow">
-            <h2>Typical workflow</h2>
-            <p class="section-lead">You can stay entirely in rule-based commands, add AI only where it helps, and use hosted features when <code>gh</code> or remotes are available.</p>
-            <ol class="steps">
-                <li><strong>Orient.</strong> Run <code>sg status</code> after switching branches or pulling.</li>
-                <li><strong>Review.</strong> Use <code>sg explain</code> (with AI) or read diffs; use <code>sg check</code> before a big merge.</li>
-                <li><strong>Commit.</strong> Stage files, run <code>sg commit</code> when you want an AI-assisted message, or commit normally.</li>
-                <li><strong>Publish.</strong> Use <code>sg push</code> or your team’s <code>sg ship</code> flow; follow <code>sg ship --status</code> if delivery is multi-step.</li>
-                <li><strong>When something breaks,</strong> <code>sg wtf</code> first, then <code>sg fix</code> or <code>sg undo</code> as suggested.</li>
-            </ol>
+        <section id="workflow" aria-labelledby="workflow-h">
+            <div class="sec-head reveal">
+                <span class="sec-index">03 — Workflow</span>
+                <h2 id="workflow-h">A loop you can run half asleep.</h2>
+                <p>Stay in rule-based commands, add AI only where it helps, and use hosted signals when <code>gh</code> is around.</p>
+            </div>
+            <div class="flow">
+                <div class="flow-step reveal"><div class="flow-n">1</div><h3>Orient</h3><p>Run <code>sg status</code> after you switch branches or pull.</p></div>
+                <div class="flow-step reveal"><div class="flow-n">2</div><h3>Review</h3><p><code>sg explain</code> for intent, <code>sg check</code> before a big merge.</p></div>
+                <div class="flow-step reveal"><div class="flow-n">3</div><h3>Commit</h3><p>Stage files, then <code>sg commit</code> or commit by hand.</p></div>
+                <div class="flow-step reveal"><div class="flow-n">4</div><h3>Publish</h3><p><code>sg push</code> or <code>sg ship</code>; track with <code>sg ship --status</code>.</p></div>
+                <div class="flow-step reveal"><div class="flow-n">5</div><h3>Recover</h3><p><code>sg wtf</code> first, then <code>sg fix</code> or <code>sg undo</code>.</p></div>
+            </div>
         </section>
 
-        <section id="install">
-            <h2>Install &amp; requirements</h2>
-            <p class="section-lead">SaneGit is distributed as an npm package and runs on modern Node with git available on your PATH.</p>
-
+        <section id="install" aria-labelledby="install-h">
+            <div class="sec-head reveal">
+                <span class="sec-index">04 — Install</span>
+                <h2 id="install-h">Runs on Node 22 and git. That is it.</h2>
+                <p>SaneGit ships as an npm package. GitHub CLI (<code>gh</code>) is optional and adds richer hosted context.</p>
+            </div>
             <div class="two-col">
-                <div class="panel">
-                    <h3>Requirements</h3>
-                    <ul>
-                        <li><strong>Node.js 22+</strong> (ESM; see package <code>engines</code>)</li>
-                        <li><strong>Git</strong> (any recent version)</li>
-                        <li>Optional: API credentials for your AI provider</li>
-                        <li>Optional: <a href="https://cli.github.com/">GitHub CLI</a> (<code>gh</code>) for richer hosted context</li>
-                    </ul>
-                </div>
-                <div class="panel">
+                <div class="panel reveal">
                     <h3>From npm</h3>
-                    <div class="code-block" style="margin-top: 8px;">
-                        <span class="code-label">Global CLI</span>
-                        npm install -g sanegit
+                    <div class="code-block"><button class="copy-btn" data-copy="npm install -g sanegit">Copy</button><span class="code-label">Global CLI</span><span class="p">$</span> npm install -g sanegit</div>
+                    <h3 style="margin-top: 18px;">From source</h3>
+                    <div class="code-block"><button class="copy-btn" data-copy="git clone https://github.com/ntufar/sanegit.git">Copy</button><span class="p">$</span> git clone https://github.com/ntufar/sanegit.git<br><span class="p">$</span> cd sanegit <span class="c">&amp;&amp;</span> npm install<br><span class="p">$</span> npm run build <span class="c">&amp;&amp;</span> npm link</div>
+                </div>
+                <div class="panel reveal" id="configuration">
+                    <h3>Configure AI (optional)</h3>
+                    <p>Settings live in <code style="font-family: var(--font-mono); font-size: 0.85em; color: var(--text);">.sanegit/</code> — keep that directory local and gitignored. Keys never touch config files: pass a credential reference and it resolves at runtime.</p>
+                    <div class="code-block"><button class="copy-btn" data-copy="sg ai-configure --provider openai --credential-ref OPENAI_API_KEY">Copy</button><span class="p">$</span> sg ai-configure --provider openai --credential-ref OPENAI_API_KEY</div>
+                    <div class="callout warn" style="margin-top: 14px;">
+                        <span class="ic" aria-hidden="true">!</span>
+                        <div><h3>AI-required commands</h3><p><code>sg explain</code> and <code>sg commit</code> need a working provider. The rest run on rules, hosted APIs, or local git data.</p></div>
                     </div>
-                    <h3 style="margin-top: 16px;">From source</h3>
-                    <div class="code-block">
-                        git clone https://github.com/ntufar/sanegit.git<br>
-                        cd sanegit &amp;&amp; npm install<br>
-                        npm run build &amp;&amp; npm link
-                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="configuration">
-            <h2>Configuration</h2>
-            <p class="section-lead">Per-repository settings live under <code>.sanegit/</code>. Treat that directory as local-only and add it to <code>.gitignore</code>.</p>
-
-            <div class="two-col">
-                <div class="panel">
-                    <h3>AI providers</h3>
-                    <ul>
-                        <li><code>openai</code>, <code>anthropic</code>, <code>google</code> (Gemini), <code>mistral</code></li>
-                        <li><code>custom</code> with <code>--url</code> pointing at your HTTP API</li>
-                    </ul>
-                </div>
-                <div class="panel">
-                    <h3>Secrets</h3>
-                    <p style="color: #586069; font-size: 0.92em; line-height: 1.55;">API keys are not written into config files. Pass a <strong>credential reference</strong>—typically an environment variable name—via <code>--credential-ref</code> so secrets resolve at runtime.</p>
-                </div>
+        <section id="quickstart" aria-labelledby="quick-h">
+            <div class="sec-head reveal">
+                <span class="sec-index">05 — Quick start</span>
+                <h2 id="quick-h">Inside any repo, in under a minute.</h2>
             </div>
-
-            <div class="code-block">
-                <span class="code-label">Non-interactive example</span>
-                sg ai-configure --provider openai --credential-ref OPENAI_API_KEY
-            </div>
-
-            <div class="info-box warn">
-                <h3>AI-required commands</h3>
-                <p><code>sg explain</code> and <code>sg commit</code> need a working provider configuration. Other commands may still run with rules, hosted APIs, or local git data.</p>
+            <div class="quick-grid">
+                <div class="quick-card reveal">
+                    <h3>01 · Check health</h3>
+                    <div class="code-block"><button class="copy-btn" data-copy="cd my-repo && sg status">Copy</button><span class="p">$</span> cd my-repo <span class="c">&amp;&amp;</span> sg status</div>
+                </div>
+                <div class="quick-card reveal">
+                    <h3>02 · Explain and commit (with AI)</h3>
+                    <div class="code-block"><button class="copy-btn" data-copy="sg explain">Copy</button><span class="p">$</span> git add src/feature.ts<br><span class="p">$</span> sg explain<br><span class="p">$</span> sg commit</div>
+                </div>
+                <div class="quick-card reveal">
+                    <h3>03 · Ship or push</h3>
+                    <div class="code-block"><button class="copy-btn" data-copy="sg ship">Copy</button><span class="p">$</span> sg push <span class="c"># or the full flow</span><br><span class="p">$</span> sg ship<br><span class="p">$</span> sg ship --status</div>
+                </div>
+                <div class="quick-card reveal">
+                    <h3>04 · When it breaks</h3>
+                    <div class="code-block"><button class="copy-btn" data-copy="sg wtf">Copy</button><span class="p">$</span> sg wtf <span class="c"># triage first</span><br><span class="p">$</span> sg fix <span class="c"># then guided repair</span></div>
+                </div>
             </div>
         </section>
 
-        <section id="quickstart">
-            <h2>Quick start</h2>
-            <p class="section-lead">Inside any git repository:</p>
-
-            <h3>Check health</h3>
-            <div class="code-block">
-                <span class="code-label">$ cd my-repo &amp;&amp; sg status</span>
-                sg status
+        <section id="resources" aria-labelledby="res-h">
+            <div class="sec-head reveal">
+                <span class="sec-index">06 — Resources</span>
+                <h2 id="res-h">Source, guide, and package.</h2>
             </div>
-
-            <h3>Configure AI (optional)</h3>
-            <div class="code-block">
-                <span class="code-label">Interactive</span>
-                sg ai-configure
-                <br><span style="color:#6a737d"># or</span>
-                <br>sg ai-configure --provider openai --credential-ref OPENAI_API_KEY
+            <div class="res-cta reveal">
+                <a href="https://github.com/ntufar/sanegit" class="btn">GitHub repository
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </a>
+                <a href="https://github.com/ntufar/sanegit/blob/master/doc/guide.md" class="btn-ghost">Full guide</a>
+                <a href="https://github.com/ntufar/sanegit/blob/master/CHANGELOG.md" class="btn-ghost">Changelog</a>
+                <a href="https://www.npmjs.com/package/sanegit" class="btn-ghost">npm package</a>
             </div>
-
-            <h3>Explain and commit (with AI)</h3>
-            <div class="code-block">
-                git add src/feature.ts<br>
-                sg explain<br>
-                sg commit
-            </div>
-
-            <h3>Ship or push</h3>
-            <div class="code-block">
-                sg push<br>
-                <span style="color:#6a737d"># or a full delivery flow</span><br>
-                sg ship<br>
-                sg ship --status
-            </div>
-        </section>
-
-        <section id="resources">
-            <h2>Resources</h2>
-            <p class="section-lead">Source, detailed guide, and package metadata:</p>
-            <div>
-                <a href="https://github.com/ntufar/sanegit" class="cta-button">GitHub repository</a>
-                <a href="https://github.com/ntufar/sanegit/blob/master/README.md" class="cta-button secondary">README</a>
-                <a href="https://github.com/ntufar/sanegit/blob/master/doc/guide.md" class="cta-button secondary">Full guide</a>
-                <a href="https://github.com/ntufar/sanegit/blob/master/CHANGELOG.md" class="cta-button secondary">Changelog</a>
-                <a href="https://www.npmjs.com/package/sanegit" class="cta-button secondary">npm package</a>
-            </div>
-
-            <div class="info-box">
-                <h3>Open source</h3>
-                <p>SaneGit is MIT-licensed. Issues and contributions are welcome on GitHub.</p>
+            <div class="callout reveal">
+                <span class="ic" aria-hidden="true">§</span>
+                <div><h3>Open source</h3><p>SaneGit is MIT-licensed. Issues and contributions are welcome on GitHub.</p></div>
             </div>
         </section>
     </div>
+    </main>
 
     <footer>
-        <p>Made by <a href="https://github.com/ntufar">Nicolai Tufar</a></p>
-        <p><a href="https://github.com/ntufar/sanegit">GitHub</a> • <a href="https://www.npmjs.com/package/sanegit">npm</a> • <a href="https://github.com/ntufar/sanegit/issues">Issues</a></p>
-        <p style="margin-top: 20px; opacity: 0.7; font-size: 0.9em;">© 2026 SaneGit. MIT License.</p>
+        <div class="wrap foot">
+            <p>© <span id="year">2026</span> SaneGit · MIT License · by <a href="https://github.com/ntufar" style="margin: 0;">Nicolai Tufar</a></p>
+            <nav aria-label="Footer">
+                <a href="https://github.com/ntufar/sanegit">GitHub</a><a href="https://www.npmjs.com/package/sanegit">npm</a><a href="https://github.com/ntufar/sanegit/issues">Issues</a><a href="#top">Back to top ↑</a>
+            </nav>
+        </div>
     </footer>
+    <script>
+        // Staggered reveal on scroll
+        (function () {
+            var els = document.querySelectorAll('.reveal');
+            if (!('IntersectionObserver' in window)) {
+                els.forEach(function (el) { el.classList.add('in'); });
+                return;
+            }
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (e) {
+                    if (e.isIntersecting) {
+                        e.target.style.transitionDelay = Math.min(e.target.getBoundingClientRect().top % 160, 120) + 'ms';
+                        e.target.classList.add('in');
+                        io.unobserve(e.target);
+                    }
+                });
+            }, { threshold: 0.08 });
+            els.forEach(function (el) { io.observe(el); });
+        })();
+        // Spotlight position for bento cards
+        document.querySelectorAll('.b-card').forEach(function (card) {
+            card.addEventListener('pointermove', function (ev) {
+                var r = card.getBoundingClientRect();
+                card.style.setProperty('--mx', ((ev.clientX - r.left) / r.width * 100) + '%');
+                card.style.setProperty('--my', ((ev.clientY - r.top) / r.height * 100) + '%');
+            });
+        });
+        // Active nav link
+        (function () {
+            var links = Array.prototype.slice.call(document.querySelectorAll('#navLinks a'));
+            var map = {};
+            links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+            if (!('IntersectionObserver' in window)) return;
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (e) {
+                    if (e.isIntersecting) {
+                        links.forEach(function (a) { a.classList.remove('active'); });
+                        var a = map[e.target.id];
+                        if (a) a.classList.add('active');
+                    }
+                });
+            }, { rootMargin: '-40% 0px -55% 0px' });
+            Object.keys(map).forEach(function (id) {
+                var s = document.getElementById(id);
+                if (s) io.observe(s);
+            });
+        })();
+        // Command filter
+        (function () {
+            var input = document.getElementById('cmdFilter');
+            var count = document.getElementById('cmdCount');
+            var items = Array.prototype.slice.call(document.querySelectorAll('.cmd-item'));
+            var groups = Array.prototype.slice.call(document.querySelectorAll('.cmd-group'));
+            function update() {
+                var q = input.value.trim().toLowerCase();
+                var shown = 0;
+                items.forEach(function (it) {
+                    var hit = !q || (it.textContent + ' ' + it.getAttribute('data-keys')).toLowerCase().indexOf(q) !== -1;
+                    it.classList.toggle('hidden', !hit);
+                    if (hit) shown++;
+                });
+                groups.forEach(function (g) {
+                    var any = Array.prototype.some.call(g.querySelectorAll('.cmd-item'), function (it) { return !it.classList.contains('hidden'); });
+                    g.style.display = any ? '' : 'none';
+                });
+                count.textContent = q ? shown + ' of ' + items.length + ' shown' : items.length + ' commands';
+            }
+            input.addEventListener('input', update);
+            update();
+        })();
+        // Copy buttons
+        document.querySelectorAll('[data-copy]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var text = btn.getAttribute('data-copy');
+                function done() {
+                    var old = btn.textContent;
+                    btn.textContent = 'Copied';
+                    setTimeout(function () { btn.textContent = old; }, 1400);
+                }
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(done, done);
+                } else {
+                    var ta = document.createElement('textarea');
+                    ta.value = text;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    try { document.execCommand('copy'); } catch (e) {}
+                    document.body.removeChild(ta);
+                    done();
+                }
+            });
+        });
+        // Ribbon: duplicate track for a gapless loop
+        (function () {
+            var t = document.getElementById('ribbonTrack');
+            if (t) t.innerHTML += t.innerHTML;
+        })();
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>
